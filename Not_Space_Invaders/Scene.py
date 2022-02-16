@@ -178,7 +178,18 @@ player2 = Player(self.sprites["heart"],
                  self.sprites["player_bullet"],
                  2)
 
-p1_points = font.render(str(player1.points))
+player1_name = 'Player 1'
+player2_name = 'Player 2'
+
+player1_joyid = 0
+player2_joyid = 0
+
+p2_title_label = Label(player1_name, 80, 15, PLAYER1_COLOR, 40, FONT)
+p2_title_label = Label(player2_name, WIDTH - 110, 15, PLAYER2_COLOR, 40, FONT)
+
+p1_points_label = Label(str(player1.points), 20, 80, TITANIUM_HWHITE, 40, FONT, 'topleft', (helth_img_size, 80))
+p2_points_label = Label("{p2}".format(p2=player2.points), WIDTH - 20, 80, TITANIUM_HWHITE, 40, FONT, 'topright', (WIDTH - helth_img_size, 80))
+
 
 
 def init_joysticks():
@@ -218,12 +229,6 @@ def get_sound_state(setting_file: str) -> int:
 
 
 menu_font_size = int(60)
-
-player1_name = 'Player 1'
-player2_name = 'Player 2'
-
-player1_joyid = 0
-player2_joyid = 0
 
 """""""""""""""""""""""""""
     CLASSES
@@ -933,19 +938,9 @@ class GameScene(Scene):
         self.player1_animation = Animation(self.sprites["player1"], 500)
         self.player2_animation = Animation(self.sprites["player2"], 500)
 
-        self.player1 = Player(self.sprites["heart"],
-                              self.sprites["player1"],
-                              image_size,
-                              HEIGHT-image_size,
-                              self.sprites["player_bullet"],
-                              1)
+        global player1
+        global player2
 
-        self.player2 = Player(self.sprites["heart"],
-                              self.sprites["player2"],
-                              image_size,
-                              HEIGHT - image_size,
-                              self.sprites["player_bullet"],
-                              2)
 
         global p1_p2_controllers_chosen
         if p1_p2_controllers_chosen[0]:
