@@ -160,6 +160,27 @@ p1_p2_controllers_chosen = [p1_controller_chosen, p2_controller_chosen]
 is_multiplayer = False
 
 
+# player in-game stuff
+player1_animation = Animation(self.sprites["player1"], 500)
+player2_animation = Animation(self.sprites["player2"], 500)
+
+player1 = Player(self.sprites["heart"],
+                 self.sprites["player1"],
+                 image_size,
+                 HEIGHT-image_size,
+                 self.sprites["player_bullet"],
+                 1)
+
+player2 = Player(self.sprites["heart"],
+                 self.sprites["player2"],
+                 image_size,
+                 HEIGHT - image_size,
+                 self.sprites["player_bullet"],
+                 2)
+
+p1_points = font.render(str(player1.points))
+
+
 def init_joysticks():
     global joysticks
     for i in range(pygame.joystick.get_count()):  # pygame.joystick.get_count()
@@ -935,10 +956,25 @@ class GameScene(Scene):
             self.player2.joysticks_index = 1
 
     def process_input(self, events, pressed_keys):
-        pass
+        for event in events:
+            if self.player1.health > 0:
+                self.player1.event_handler(event)
+            if self.player2.health > 0:
+                self.player2.event_handler(event)
 
     def update(self):
-        pass
+        keys = pygame.key.get_pressed()  # checking pressed keys
+
+        # getting all enemy bullets
+        en_bullets = []
+        for enemy in enemies:
+            en_bullets += enemy.en_bullets
+        print(en_bullets)
+
+        # player updates
+        self.player1.update(keys, en_bullets)
+        self.player2.update(keys, en_bullets)
+
 
     def show(self, window: Window):
         window.screen.fill(BLACK)
