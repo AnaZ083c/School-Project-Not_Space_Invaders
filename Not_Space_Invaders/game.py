@@ -2,7 +2,6 @@ from Window import Window
 from Sprite import SpriteSheet, Sprite, Animation
 from Player_classes import Player, Bullet
 from Enemy_classes import Enemy, Enemies
-# from constants_and_globals import *
 from Stars_classes import Star
 from functions import *
 from Scene import *
@@ -109,25 +108,25 @@ def run_game(starting_scene):
     pygame.mixer.pre_init(44100, -16, 2, 1024)
     pygame.mixer.init(44100, -16, 2, 1024)
     pygame.mixer.set_num_channels(128)
-    # pygame.mixer.music.load(THEME)
-    # pygame.mixer.music.set_volume(0.5)
+    pygame.mixer.music.load(THEME)
+    pygame.mixer.music.set_volume(0.2)
 
     # if cag.sound_state:
-    # pygame.mixer.music.play(-1)
+    pygame.mixer.music.play(-1)
 
     active_scene = starting_scene
 
-    cag.sound_state = get_sound_state(SETTINGS)
+    # cag.sound_state = get_sound_state(SETTINGS)
 
     while active_scene is not None:
         window.clock.tick(FPS)
 
         pressed_keys = pygame.key.get_pressed()
 
-        if not cag.sound_state:
-            pygame.mixer.music.pause()
-        else:
-            pygame.mixer.music.unpause()
+        # if not cag.sound_state:
+        #     pygame.mixer.music.pause()
+        # else:
+        #     pygame.mixer.music.unpause()
 
         # Event filtering
         filtered_events = []
@@ -138,9 +137,9 @@ def run_game(starting_scene):
             elif event.type == pygame.KEYDOWN:
                 alt_pressed = pressed_keys[pygame.K_LALT] or \
                               pressed_keys[pygame.K_RALT]
-                if event.key == pygame.K_F1:  # toggle sound 0/1
-                    toggle_sound_state(SETTINGS, int(not cag.sound_state))
-                    print(cag.sound_state)
+                # if event.key == pygame.K_F1:  # toggle sound 0/1
+                #     toggle_sound_state(SETTINGS, int(not cag.sound_state))
+                #     # print(cag.sound_state)
                 if event.key == pygame.K_ESCAPE:
                     quit_attempt = True
                 elif event.key == pygame.K_F4 and alt_pressed:

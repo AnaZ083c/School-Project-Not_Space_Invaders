@@ -83,8 +83,8 @@ win_img_size = FRAME_OFFSET * win_sprite.scale
 player1_animation = Animation(player1_sprites, 500)
 bullet_animation = Animation(bullet_sprites, 80)
 
-player1 = Player(helth_sprite, player1_sprites, image_size, HEIGHT-image_size, bullet_sprites, joysticks, 1, 1)
-player2 = Player(helth_sprite, player2_sprites, image_size+image_size, HEIGHT-image_size, bullet_sprites, joysticks, 2, 0)
+player1 = Player(helth_sprite, player1_sprites, image_size, HEIGHT-image_size, bullet_sprites, joysticks, 1)
+player2 = Player(helth_sprite, player2_sprites, image_size+image_size, HEIGHT-image_size, bullet_sprites, joysticks, 2)
 
 player2.set_controls({
     "up": pygame.K_w,

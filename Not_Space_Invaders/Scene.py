@@ -1,4 +1,3 @@
-# from Window import Window
 from Sprite import SpriteSheet, Sprite, Animation
 from Player_classes import Player, Bullet
 from Enemy_classes import Enemy, Enemies
@@ -160,10 +159,6 @@ p1_p2_controllers_chosen = [p1_controller_chosen, p2_controller_chosen]
 is_multiplayer = False
 
 
-# player in-game stuff
-
-
-
 def init_joysticks():
     global joysticks
     for i in range(pygame.joystick.get_count()):  # pygame.joystick.get_count()
@@ -199,11 +194,20 @@ def get_sound_state(setting_file: str) -> int:
 
     return int(current_state)
 
+
 player1_name = 'Player 1'
 player2_name = 'Player 2'
 
 player1_joyid = 0
 player2_joyid = 0
+
+player2_controls = {
+    "up": pygame.K_w,
+    "down": pygame.K_s,
+    "left": pygame.K_a,
+    "right": pygame.K_d,
+    "fire": pygame.K_k
+}
 
 menu_font_size = int(60)
 
@@ -291,13 +295,14 @@ class TitleScene(Scene):
                         self.terminate()
 
     def update(self):
-        global sound_toggle_label
-        current_sound_state = get_sound_state(SETTINGS)
-
-        sound_toggle_label.update("Music: {sound}".format(sound=current_sound_state), (255, 255, 0))
+        pass
+        # global sound_toggle_label
+        # current_sound_state = get_sound_state(SETTINGS)
+        #
+        # sound_toggle_label.update("Music: {sound}".format(sound=current_sound_state), (255, 255, 0))
 
     def show(self, window: Window):
-        global sound_toggle_label
+        # global sound_toggle_label
 
         window.screen.fill(BLACK)
         animate_stars(window)
@@ -307,7 +312,7 @@ class TitleScene(Scene):
         self.labels[1].show(window)     # draw Multiplayer text
         self.labels[2].show(window)     # draw Options text
         self.labels[3].show(window)     # draw Exit text
-        sound_toggle_label.show(window)
+        # sound_toggle_label.show(window)
 
 
 """""""""""""""""""""""""""
@@ -340,8 +345,8 @@ class EnterNameP1(Scene):
 
         self.input_box = InputBox(self.font, WIDTH/2 - 110, HEIGHT/2 - 20, 0, 60, player1_name, 'Player 1')
 
-        print("player1_name =", player1_name)
-        print("placeholder = ", self.input_box.placeholder)
+        # print("player1_name =", player1_name)
+        # print("placeholder = ", self.input_box.placeholder)
 
     def process_input(self, events, pressed_keys):
         global player1_name
@@ -367,7 +372,7 @@ class EnterNameP1(Scene):
                     if self.selected == 1:  # Enter name
                         if self.notEmptyName:
                             player1_name = self.input_box.text
-                            print(player1_name)
+                            # print(player1_name)
                             self.switch_to_scene(ChooseDevice(self.sprites))
                     if self.selected == 2:  # Back
                         self.switch_to_scene(TitleScene(self.sprites))
@@ -535,7 +540,7 @@ class ChooseDeviceP2(Scene):
         global player1_joyid
         global player2_joyid
 
-        print(p1_p2_controllers_chosen)
+        # print(p1_p2_controllers_chosen)
 
         for event in events:
             if event.type == pygame.KEYDOWN:
@@ -686,7 +691,7 @@ class ControllerInitP2(Scene):
 
     def update(self):
         init_joysticks()
-        print(joysticks)
+        # print(joysticks)
 
         if not len(joysticks):
             if self.labels[3].string != 'Keyboard':
@@ -746,6 +751,7 @@ class ChooseDevice(Scene):
 
     def process_input(self, events, pressed_keys):
         global controller_chosen
+        global player1_joyid
 
         for event in events:
             if event.type == pygame.KEYDOWN:
@@ -768,6 +774,7 @@ class ChooseDevice(Scene):
                         controller_chosen = True
                         self.switch_to_scene(ControllerInit(self.sprites))
                     if self.selected == 2:  # Keyboard
+                        player1_joyid = -1
                         self.switch_to_scene(Singleplayer(self.sprites))
                     if self.selected == 3:  # Back
                         self.switch_to_scene(EnterNameP1(self.sprites))
@@ -860,18 +867,67 @@ class Singleplayer(Scene):
         #                       image_size, HEIGHT-image_size, self.sprites["player_bullet"],
         #                       joysticks, 1, 1)
 
+        global joysticks
+        self.heart_img_size = FRAME_OFFSET * self.sprites["heart"].scale
+        self.death_img_size = FRAME_OFFSET * self.sprites["death"].scale
+        self.win_img_size = FRAME_OFFSET * self.sprites["win"].scale
+
+
+        self.player1 = Player(self.sprites["heart"], self.sprites["player1"],
+                              image_size, HEIGHT-image_size, self.sprites["player_bullet"],
+                              1, list(joysticks), player1_joyid)
+
+        global player1_name
+        self.p1_title_label = Label('Player 1', self.heart_img_size - 40, 15, PLAYER1_COLOR, 40, FONT)
+        self.p1_points_label = Label(str(self.player1.points), self.heart_img_size, 80, TITANIUM_HWHITE, 40, FONT, 'topleft',
+                                     (self.heart_img_size, 80))
+
+        self.enemies = read_enemies("test0_0.ens", self.sprites["enemies"], self.sprites["enemy_bullet"], 150, 80)
+        self.pressed_keys = None
+
     def process_input(self, events, pressed_keys):
+        self.pressed_keys = pressed_keys
         for event in events:
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
-                # Move to the next scene when the user pressed Enter
-                self.switch_to_scene(TitleScene(self.sprites))
+            if self.player1.health > 0:
+                self.player1.event_handler(event)
 
     def update(self):
-        pass
+        en_bullets = []
+        for enemy in self.enemies:
+            en_bullets += enemy.en_bullets
+
+        self.player1.update(self.pressed_keys, en_bullets)
+        self.p1_points_label.update(str(self.player1.points), TITANIUM_HWHITE)
+
+        # enemy update
+        for enemy in self.enemies:
+            enemy.update(self.player1.bullets, self.enemies, True)
+
+        # enemy health checker
+        for enemy in self.enemies:
+            if enemy.helth <= 0:
+                tmp = enemy
+                self.enemies.remove(enemy)
+                if tmp.hit_by_player_num == 1:
+                    self.player1.points += tmp.worth
 
     def show(self, window: Window):
         window.screen.fill(BLACK)
         animate_stars(window)
+
+        self.player1.show(window)
+
+        for enemy in self.enemies:
+            enemy.show(window)
+
+        if len(self.enemies) != 0 and self.player1.health <= 0:
+            self.sprites["death"].show_frames(window, (WIDTH / 2 - (self.death_img_size / 2), HEIGHT / 2 - (self.death_img_size / 2)))
+        if len(self.enemies) == 0:
+            self.sprites["win"].show_frames(window, (WIDTH / 2 - (self.win_img_size / 2), HEIGHT / 2 - (self.win_img_size / 2)))
+
+        # Player 1 GUI
+        self.p1_title_label.show(window)
+        self.p1_points_label.show(window)
 
 
 """""""""""""""""""""""""""
@@ -887,18 +943,95 @@ class Multiplayer(Scene):
         #                       image_size, HEIGHT-image_size, self.sprites["player_bullet"],
         #                       joysticks, 1, 1)
 
+        global joysticks
+        self.heart_img_size = FRAME_OFFSET * self.sprites["heart"].scale
+        self.death_img_size = FRAME_OFFSET * self.sprites["death"].scale
+        self.win_img_size = FRAME_OFFSET * self.sprites["win"].scale
+
+        self.player1 = Player(self.sprites["heart"], self.sprites["player1"],
+                              image_size, HEIGHT - image_size, self.sprites["player_bullet"],
+                              1, list(joysticks), player1_joyid)
+
+        self.player2 = Player(self.sprites["heart"], self.sprites["player2"],
+                              image_size + image_size, HEIGHT - image_size, self.sprites["player_bullet"],
+                              2, list(joysticks), player2_joyid)
+
+        self.player2.set_controls({
+            "up": pygame.K_w,
+            "down": pygame.K_s,
+            "left": pygame.K_a,
+            "right": pygame.K_d,
+            "fire": pygame.K_k
+        })
+
+        global player1_name
+        global player2_name
+        self.p1_title_label = Label(player1_name, self.heart_img_size - 40, 15, PLAYER1_COLOR, 40, FONT)
+        self.p1_points_label = Label(str(self.player1.points), self.heart_img_size, 80, TITANIUM_HWHITE, 40, FONT,
+                                     'topleft',
+                                     (self.heart_img_size, 80))
+
+        self.p2_title_label = Label(player2_name, WIDTH - self.heart_img_size - 110, 15, PLAYER2_COLOR, 40, FONT)
+        self.p2_points_label = Label("{p2}".format(p2=self.player2.points), WIDTH - self.heart_img_size, 80, TITANIUM_HWHITE, 40, FONT, 'topright', (WIDTH - self.heart_img_size, 80))
+
+        self.enemies = read_enemies("test0_0.ens", self.sprites["enemies"], self.sprites["enemy_bullet"], 150, 80)
+        self.pressed_keys = None
+
     def process_input(self, events, pressed_keys):
+        self.pressed_keys = pressed_keys
         for event in events:
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
-                # Move to the next scene when the user pressed Enter
-                self.switch_to_scene(TitleScene(self.sprites))
+            if self.player1.health > 0:
+                self.player1.event_handler(event)
+            if self.player2.health > 0:
+                self.player2.event_handler(event)
 
     def update(self):
-        pass
+        en_bullets = []
+        for enemy in self.enemies:
+            en_bullets += enemy.en_bullets
+
+        self.player1.update(self.pressed_keys, en_bullets)
+        self.player2.update(self.pressed_keys, en_bullets)
+
+        self.p1_points_label.update(str(self.player1.points), TITANIUM_HWHITE)
+        self.p2_points_label.update(str(self.player2.points), TITANIUM_HWHITE)
+
+        # enemy update
+        for enemy in self.enemies:
+            enemy.update(self.player1.bullets + self.player2.bullets, self.enemies, True)
+
+        # enemy health checker
+        for enemy in self.enemies:
+            if enemy.helth <= 0:
+                tmp = enemy
+                self.enemies.remove(enemy)
+                if tmp.hit_by_player_num == 1:
+                    self.player1.points += tmp.worth
+                elif tmp.hit_by_player_num == 2:
+                    self.player2.points += tmp.worth
 
     def show(self, window: Window):
         window.screen.fill(BLACK)
         animate_stars(window)
+
+        self.player1.show(window)
+        self.player2.show(window)
+
+        for enemy in self.enemies:
+            enemy.show(window)
+
+        if len(self.enemies) != 0 and self.player1.health <= 0 and self.player2.health <= 0:
+            self.sprites["death"].show_frames(window, (WIDTH / 2 - (self.death_img_size / 2), HEIGHT / 2 - (self.death_img_size / 2)))
+        if len(self.enemies) == 0:
+            self.sprites["win"].show_frames(window, (WIDTH / 2 - (self.win_img_size / 2), HEIGHT / 2 - (self.win_img_size / 2)))
+
+        # Player 1 GUI
+        self.p1_title_label.show(window)
+        self.p1_points_label.show(window)
+
+        # Player 2 GUI
+        self.p2_title_label.show(window)
+        self.p2_points_label.show(window)
 
 
 """""""""""""""""""""""""""
@@ -911,6 +1044,7 @@ class GameScene(Scene):
         super().__init__(sprites)
 
         self.joysticks_list = list(joysticks)
+        self.enemies_list = []
 
         self.player1_animation = Animation(self.sprites["player1"], 500)
         self.player2_animation = Animation(self.sprites["player2"], 500)
@@ -931,8 +1065,12 @@ class GameScene(Scene):
 
         global player1_name
         global player2_name
-        heart_img_size = sprites["heart"].scale * FRAME_OFFSET
-        self.p2_title_label = Label(player1_name, heart_img_size - 40, 15, PLAYER1_COLOR, 40, FONT)
+        heart_img_size = self.sprites["heart"].scale * FRAME_OFFSET
+
+        self.death_img_size = FRAME_OFFSET * self.sprites["death"].scale
+        self.win_img_size = FRAME_OFFSET * self.spirtes["win"].scale
+
+        self.p1_title_label = Label(player1_name, heart_img_size - 40, 15, PLAYER1_COLOR, 40, FONT)
         self.p2_title_label = Label(player2_name, WIDTH - heart_img_size - 110, 15, PLAYER2_COLOR, 40, FONT)
 
         self.p1_points_label = Label(str(self.player1.points), heart_img_size, 80, TITANIUM_HWHITE, 40, FONT, 'topleft', (heart_img_size, 80))
@@ -946,6 +1084,8 @@ class GameScene(Scene):
         if p1_p2_controllers_chosen[1]:
             self.player2.joysticks = self.joysticks_list
             self.player2.joysticks_index = 1
+
+        self.enemies = read_enemies("test0_0.ens", self.sprites["enemies"], self.sprites["enemy_bullet"], 150, 80)
 
     def process_input(self, events, pressed_keys):
         for event in events:
@@ -961,13 +1101,48 @@ class GameScene(Scene):
         en_bullets = []
         for enemy in enemies:
             en_bullets += enemy.en_bullets
-        print(en_bullets)
 
         # player updates
         self.player1.update(keys, en_bullets)
         self.player2.update(keys, en_bullets)
+        self.p1_points_label.update(str(self.player1.points), PLAYER1_COLOR)
+        self.p2_points_label.update(str(self.player2.points), PLAYER2_COLOR)
 
+        # enemy update
+        for enemy in self.enemies:
+            enemy.update(self.player1.bullets + self.player2.bullets, self.enemies, True)
+
+        # enemy health checker
+        for enemy in self.enemies:
+            if enemy.helth <= 0:
+                tmp = enemy
+                self.enemies.remove(enemy)
+                if tmp.hit_by_player_num == 1:
+                    self.player1.points += tmp.worth
+                elif tmp.hit_by_player_num == 2:
+                    player2.points += tmp.worth
 
     def show(self, window: Window):
         window.screen.fill(BLACK)
         animate_stars(window)
+
+        # show frame image
+        self.player1.show(window)
+        self.player2.show(window)
+
+        for enemy in self.enemies:
+            enemy.show(window)
+
+        if len(self.enemies) != 0 and self.player1.health <= 0 and self.player2.health <= 0:
+            self.sprites["death"].show_frames(window, (WIDTH/2 - (self.death_img_size/2), HEIGHT/2 - (self.death_img_size/2)))
+        if len(self.enemies) == 0:
+            self.sprites["win"].show_frames(window, (WIDTH/2 - (self.win_img_size/2), HEIGHT/2 - (self.win_img_size/2)))
+
+        # Player 1 GUI
+        self.p1_title_label.show(window)
+        self.p1_points_label.show(window)
+
+        # Player 2 GUI
+        self.p2_title_label.show(window)
+        self.p2_points_label.show(window)
+
