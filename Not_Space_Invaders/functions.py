@@ -45,7 +45,6 @@ def read_enemies(infilename: str, enemy_ids: list, bullet_sprites: Sprite, x_off
         for j in range(0, rows):
             curr_y_offset = y_offset * (j+1)
             if ids[j][i] == '0':
-                """ TODO: empty sprite """
                 continue
 
             elif ids[j][i] == '1':

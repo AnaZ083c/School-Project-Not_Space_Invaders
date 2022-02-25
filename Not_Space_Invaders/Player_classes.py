@@ -45,6 +45,9 @@ class Player:
         self.get_hearts_xys()
 
         self.sfx = pygame.mixer.Sound(PLAYER_RED_BULLET_SFX)
+        self.current_hit_sfx = 0
+        self.hit_sfx = pygame.mixer.Sound(player_hit_sfxs[self.current_hit_sfx])
+        self.explode_sfx = pygame.mixer.Sound(ENEMY_EXPLODE)
 
     # moving and stuff
     def update(self, keys: pygame.key, bullet_list):
@@ -144,10 +147,19 @@ class Player:
     def bullet_collision_handler(self, bullet_list):
         for bullet in bullet_list:
             if (self.x - 50 <= bullet.x <= self.x + 50) and (self.y - 60 <= bullet.y <= self.y + 60):
+                self.hit_sfx.play()
                 # print('x, y =', bullet.x, bullet.y)
                 bullet.hit = True
                 self.health -= 1
+                if self.health <= 0:
+                    self.explode_sfx.play()
                 print('player', self.health)
+
+                if self.current_hit_sfx < len(player_hit_sfxs) - 1:
+                    self.current_hit_sfx += 1
+                else:
+                    self.current_hit_sfx = 0
+                self.hit_sfx = pygame.mixer.Sound(player_hit_sfxs[self.current_hit_sfx])
             else:
                 continue
                 # bullet.hit = False

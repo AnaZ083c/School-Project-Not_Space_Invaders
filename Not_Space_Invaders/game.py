@@ -108,11 +108,11 @@ def run_game(starting_scene):
     pygame.mixer.pre_init(44100, -16, 2, 1024)
     pygame.mixer.init(44100, -16, 2, 1024)
     pygame.mixer.set_num_channels(128)
-    pygame.mixer.music.load(THEME)
-    pygame.mixer.music.set_volume(0.2)
+    # pygame.mixer.music.load(THEME)
+    # pygame.mixer.music.set_volume(0.15)
 
     # if cag.sound_state:
-    pygame.mixer.music.play(-1)
+    # pygame.mixer.music.play(-1)
 
     active_scene = starting_scene
 
@@ -161,4 +161,5 @@ def run_game(starting_scene):
 
 run_game(TitleScene(sprites))
 pygame.quit()
-quit()
+exit(0)
+# quit()

@@ -37,18 +37,27 @@ class Enemy:
 
         self.sfx = pygame.mixer.Sound(GENERIC_ENEMY_BULLET_SFX)
 
+        self.current_hit_sfx = 0
+        self.hit_sfx = pygame.mixer.Sound(enemy_hit_sfxs[self.current_hit_sfx])
+        self.explode_sfx = pygame.mixer.Sound(ENEMY_EXPLODE)
+
+        # self.showing = True
+
     # moving and stuff
     def update(self, bullet_list, enemies, is_group: bool = False):
         current_time = pygame.time.get_ticks()
-        if current_time - self.last_update >= self.shoot_cooldown:  # if 500 ms have passed, move on to the next frame
-            self.timer += 1
-            self.last_update = current_time
-            if self.timer >= self.shoot_cooldown:
-                # play shoot sfx
-                self.sfx.play()
-                # shoot
-                self.en_bullets.append(pc.Bullet(self.bullet_sprites, self, self.x, self.y))
-                self.timer = 0
+        if self.y + image_size < HEIGHT:
+            if current_time - self.last_update >= self.shoot_cooldown:  # if 500 ms have passed, move on to the next frame
+                self.timer += 1
+                self.last_update = current_time
+                if self.timer >= self.shoot_cooldown:
+                    # play shoot sfx
+                    self.sfx.play()
+                    # shoot
+                    self.en_bullets.append(pc.Bullet(self.bullet_sprites, self, self.x, self.y))
+                    self.timer = 0
+        # else:
+        #    self.showing = False
 
         self.x += (self.move_speed * self.direction)
 
@@ -78,6 +87,7 @@ class Enemy:
 
     def out_of_bounds_group_handler(self, enemies: list):
         if len(enemies) > 0:
+
             if enemies[-1].x + image_size > WIDTH:
                 enemies[-1].x = WIDTH - image_size
                 self.change_enemies_group_directions(enemies, -1)
@@ -89,15 +99,23 @@ class Enemy:
         for enemy in enemies:
             enemy.y += enemy.enemy_sprites.img_size/4
             enemy.direction = new_direction
+            # if enemy.y >= HEIGHT - image_size:
+            #     enemies.remove(enemy)
 
     def bullet_collision_handler(self, bullet_list):
         for bullet in bullet_list:
             if (self.x - 50 <= bullet.x <= self.x + 50) and (self.y - 50 <= bullet.y <= self.y + 50):
+                self.hit_sfx.play()
                 bullet.hit = True
                 self.was_hit = True
                 self.helth -= 1
                 self.hit_by_player_num = bullet.owner.player_num
-                print(self.helth)
+                if self.current_hit_sfx < len(enemy_hit_sfxs) - 1:
+                    self.current_hit_sfx += 1
+                else:
+                    self.current_hit_sfx = 0
+                self.hit_sfx = pygame.mixer.Sound(enemy_hit_sfxs[self.current_hit_sfx])
+                # print(self.helth)
             else:
                 continue
                 # bullet.hit = False
@@ -111,6 +129,7 @@ class Enemy:
             print(bullet.y >= HEIGHT)
             if bullet.y >= HEIGHT-100 or bullet.hit:
                 self.en_bullets.remove(bullet)
+
         window.screen.blit(self.enemy_sprites.frames[0], (self.x, self.y))
 
 

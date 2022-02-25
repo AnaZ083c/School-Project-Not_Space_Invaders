@@ -142,7 +142,6 @@ inited_p2_label = Label('X', inited_p2_xy[0], inited_p2_xy[1],
 
 # ------>  back_label2
 
-
 # toggle sound label
 sound_toggle_xy = (200, HEIGHT/2)
 sound_toggle_label = Label("Music: {sound}".format(sound=sound_state), sound_toggle_xy[0], sound_toggle_xy[1],
@@ -210,6 +209,64 @@ player2_controls = {
 }
 
 menu_font_size = int(60)
+level = 1
+wave = 1
+lvl_file = LEVELS + 'level' + str(level) + '_' + str(wave) + '.ens'
+
+killed = 0
+skipped = 0
+
+
+def update_level():
+    global level
+    global wave
+    global lvl_file
+    level += 1
+    lvl_file = LEVELS + 'level' + str(level) + '_' + str(wave) + '.ens'
+
+
+def update_wave():
+    global level
+    global wave
+    global lvl_file
+    wave += 1
+    if wave > 3:
+        wave = 1
+        update_level()
+    lvl_file = LEVELS + 'level' + str(level) + '_' + str(wave) + '.ens'
+
+
+def reset_wave():
+    global level
+    global wave
+    global lvl_file
+    wave = 1
+    lvl_file = LEVELS + 'level' + str(level) + '_' + str(wave) + '.ens'
+
+
+def reset_level():
+    global level
+    global wave
+    global lvl_file
+    level = 1
+    lvl_file = LEVELS + 'level' + str(level) + '_' + str(wave) + '.ens'
+
+
+def reset_level_wave():
+    global level
+    global wave
+    global lvl_file
+    level = 1
+    wave = 1
+    lvl_file = LEVELS + 'level' + str(level) + '_' + str(wave) + '.ens'
+
+
+def delay(delay_time, timer, start_time):
+    current_time = pygame.time.get_ticks()
+    while current_time - start_time < delay_time:
+        timer += 1
+    return True
+
 
 """""""""""""""""""""""""""
     CLASSES
@@ -872,18 +929,23 @@ class Singleplayer(Scene):
         self.death_img_size = FRAME_OFFSET * self.sprites["death"].scale
         self.win_img_size = FRAME_OFFSET * self.sprites["win"].scale
 
-
         self.player1 = Player(self.sprites["heart"], self.sprites["player1"],
                               image_size, HEIGHT-image_size, self.sprites["player_bullet"],
                               1, list(joysticks), player1_joyid)
 
         global player1_name
-        self.p1_title_label = Label('Player 1', self.heart_img_size - 40, 15, PLAYER1_COLOR, 40, FONT)
+        self.p1_title_label = Label(player1_name, self.heart_img_size - 40, 15, PLAYER1_COLOR, 40, FONT)
         self.p1_points_label = Label(str(self.player1.points), self.heart_img_size, 80, TITANIUM_HWHITE, 40, FONT, 'topleft',
                                      (self.heart_img_size, 80))
 
-        self.enemies = read_enemies("test0_0.ens", self.sprites["enemies"], self.sprites["enemy_bullet"], 150, 80)
+        self.enemies = read_enemies(lvl_file, self.sprites["enemies"], self.sprites["enemy_bullet"], 150, 80)
         self.pressed_keys = None
+
+        self.enemy_explode_sfx = pygame.mixer.Sound(ENEMY_EXPLODE)
+        self.hidden = 0
+
+        self.killed_hidden = [None] * len(self.enemies)
+        self.timer_level = 0
 
     def process_input(self, events, pressed_keys):
         self.pressed_keys = pressed_keys
@@ -906,7 +968,9 @@ class Singleplayer(Scene):
         # enemy health checker
         for enemy in self.enemies:
             if enemy.helth <= 0:
+                self.enemy_explode_sfx.play()
                 tmp = enemy
+                self.killed_hidden[self.enemies.index(enemy)] = True
                 self.enemies.remove(enemy)
                 if tmp.hit_by_player_num == 1:
                     self.player1.points += tmp.worth
@@ -918,17 +982,28 @@ class Singleplayer(Scene):
         self.player1.show(window)
 
         for enemy in self.enemies:
-            enemy.show(window)
+            if enemy.y + image_size < HEIGHT:
+                enemy.show(window)
+            else:
+                self.killed_hidden[self.enemies.index(enemy)] = False
 
         if len(self.enemies) != 0 and self.player1.health <= 0:
             self.sprites["death"].show_frames(window, (WIDTH / 2 - (self.death_img_size / 2), HEIGHT / 2 - (self.death_img_size / 2)))
-        if len(self.enemies) == 0:
-            self.sprites["win"].show_frames(window, (WIDTH / 2 - (self.win_img_size / 2), HEIGHT / 2 - (self.win_img_size / 2)))
+        if self.killed_hidden.count(True) + self.killed_hidden.count(False) == len(self.enemies):
+            update_wave()
+            self.enemies = read_enemies(lvl_file, self.sprites["enemies"], self.sprites["enemy_bullet"], 150, 80)
+            self.killed_hidden = [None] * len(self.enemies)
+            print("NEXT LEVEL !!")
+            start_time = pygame.time.get_ticks()
+            delay(10, self.timer_level, start_time)
+            # self.sprites["win"].show_frames(window, (WIDTH / 2 - (self.win_img_size / 2), HEIGHT / 2 - (self.win_img_size / 2)))
+
 
         # Player 1 GUI
         self.p1_title_label.show(window)
         self.p1_points_label.show(window)
 
+        self.timer_level = 0
 
 """""""""""""""""""""""""""
     MULTIPLAYER GAME SCENE
@@ -977,6 +1052,8 @@ class Multiplayer(Scene):
         self.enemies = read_enemies("test0_0.ens", self.sprites["enemies"], self.sprites["enemy_bullet"], 150, 80)
         self.pressed_keys = None
 
+        self.enemy_explode_sfx = pygame.mixer.Sound(ENEMY_EXPLODE)
+
     def process_input(self, events, pressed_keys):
         self.pressed_keys = pressed_keys
         for event in events:
@@ -1003,6 +1080,7 @@ class Multiplayer(Scene):
         # enemy health checker
         for enemy in self.enemies:
             if enemy.helth <= 0:
+                self.enemy_explode_sfx.play()
                 tmp = enemy
                 self.enemies.remove(enemy)
                 if tmp.hit_by_player_num == 1:
@@ -1034,9 +1112,9 @@ class Multiplayer(Scene):
         self.p2_points_label.show(window)
 
 
-"""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
     UNIVERSAL GAME SCENE
-"""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 
 class GameScene(Scene):
