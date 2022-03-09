@@ -1,6 +1,6 @@
 from Sprite import SpriteSheet, Sprite, Animation
 from Player_classes import Player, Bullet
-from Enemy_classes import Enemy, Enemies
+from Enemy_classes import Enemy, Enemies, FirstBoss
 from constants_and_globals import *
 from Stars_classes import Star
 from functions import *
@@ -147,6 +147,8 @@ sound_toggle_xy = (200, HEIGHT/2)
 sound_toggle_label = Label("Music: {sound}".format(sound=sound_state), sound_toggle_xy[0], sound_toggle_xy[1],
                            (255, 255, 0), menu_font_size, FONT, 'center', sound_toggle_xy)
 
+
+
 """""""""""""""""""""""""""
     OTHER STUFF
 """""""""""""""""""""""""""
@@ -212,6 +214,7 @@ menu_font_size = int(60)
 level = 1
 wave = 1
 lvl_file = LEVELS + 'level' + str(level) + '_' + str(wave) + '.ens'
+boss_time = False
 
 killed = 0
 skipped = 0
@@ -266,6 +269,13 @@ def delay(delay_time, timer, start_time):
     while current_time - start_time < delay_time:
         timer += 1
     return True
+
+
+# ingame
+new_level_wave_font_size = int(80)
+new_lw_xy = (WIDTH/2, HEIGHT/2 - 80)
+new_lw_label = Label("Level " + str(level) + ": wave " + str(wave) + " of 3", new_lw_xy[0], new_lw_xy[1],
+                     (255, 255, 0), new_level_wave_font_size, FONT, 'center', new_lw_xy)
 
 
 """""""""""""""""""""""""""
@@ -920,14 +930,11 @@ class Singleplayer(Scene):
     def __init__(self, sprites):
         super().__init__(sprites)
 
-        # self.player1 = Player(self.sprites["heart"], self.sprites["player1"],
-        #                       image_size, HEIGHT-image_size, self.sprites["player_bullet"],
-        #                       joysticks, 1, 1)
-
         global joysticks
         self.heart_img_size = FRAME_OFFSET * self.sprites["heart"].scale
         self.death_img_size = FRAME_OFFSET * self.sprites["death"].scale
         self.win_img_size = FRAME_OFFSET * self.sprites["win"].scale
+        self.itsaboss_img_size = FRAME_OFFSET * self.sprites["its-a-boss"].scale
 
         self.player1 = Player(self.sprites["heart"], self.sprites["player1"],
                               image_size, HEIGHT-image_size, self.sprites["player_bullet"],
@@ -944,8 +951,24 @@ class Singleplayer(Scene):
         self.enemy_explode_sfx = pygame.mixer.Sound(ENEMY_EXPLODE)
         self.hidden = 0
 
-        self.killed_hidden = [None] * len(self.enemies)
+        self.killed_hidden = []  # [None] * len(self.enemies)
         self.timer_level = 0
+        self.last_update = pygame.time.get_ticks()
+        self.timer = 0
+        self.cooldown = 100
+
+        self.switch_level = False
+        self.new_set_label = new_lw_label
+        self.enemies_num = len(self.enemies)
+
+        self.bosses = [
+            FirstBoss(self.sprites["first-boss"], WIDTH / 2, HEIGHT / 2, self.sprites["enemy_bullet"], 10.0),
+            None,
+            None,
+            None,
+            None
+        ]
+        self.boss_time = False
 
     def process_input(self, events, pressed_keys):
         self.pressed_keys = pressed_keys
@@ -954,12 +977,40 @@ class Singleplayer(Scene):
                 self.player1.event_handler(event)
 
     def update(self):
+        current_time = pygame.time.get_ticks()
+        if self.switch_level:
+            if current_time - self.last_update >= self.cooldown:
+                self.timer += 1
+                self.last_update = current_time
+                if self.timer >= self.cooldown:
+                    if not self.boss_time:
+                        self.enemies = read_enemies(lvl_file, self.sprites["enemies"], self.sprites["enemy_bullet"], 150, 80)
+                        self.killed_hidden = []
+                        self.enemies_num = len(self.enemies)
+                        print("NEXT LEVEL !!")
+                        self.timer = 0
+                        self.switch_level = False
+
         en_bullets = []
         for enemy in self.enemies:
             en_bullets += enemy.en_bullets
 
+        if self.boss_time:
+            en_bullets += self.bosses[0].en_bullets
+
         self.player1.update(self.pressed_keys, en_bullets)
         self.p1_points_label.update(str(self.player1.points), TITANIUM_HWHITE)
+
+        # boss update
+        if boss_time:
+            self.bosses[0].update(self.player1.bullets)
+
+            if self.bosses[0].helth <= 0:
+                # self.bosses[0].defeated = True
+                self.bosses[0] = True
+                self.switch_level = True
+                update_wave()
+                self.new_set_label.update("LEVEL " + str(level) + ": Wave " + str(wave) + " of 3", (255, 255, 0))
 
         # enemy update
         for enemy in self.enemies:
@@ -970,7 +1021,8 @@ class Singleplayer(Scene):
             if enemy.helth <= 0:
                 self.enemy_explode_sfx.play()
                 tmp = enemy
-                self.killed_hidden[self.enemies.index(enemy)] = True
+                self.killed_hidden.append(True)
+                print(self.killed_hidden)
                 self.enemies.remove(enemy)
                 if tmp.hit_by_player_num == 1:
                     self.player1.points += tmp.worth
@@ -981,21 +1033,32 @@ class Singleplayer(Scene):
 
         self.player1.show(window)
 
+        if self.boss_time:
+            self.bosses[0].show(window)
+
         for enemy in self.enemies:
             if enemy.y + image_size < HEIGHT:
                 enemy.show(window)
             else:
-                self.killed_hidden[self.enemies.index(enemy)] = False
+                if len(self.killed_hidden) <= self.enemies_num:
+                    self.killed_hidden.append(False)
+                    # print(self.killed_hidden)
 
         if len(self.enemies) != 0 and self.player1.health <= 0:
             self.sprites["death"].show_frames(window, (WIDTH / 2 - (self.death_img_size / 2), HEIGHT / 2 - (self.death_img_size / 2)))
-        if self.killed_hidden.count(True) + self.killed_hidden.count(False) == len(self.enemies):
-            update_wave()
-            self.enemies = read_enemies(lvl_file, self.sprites["enemies"], self.sprites["enemy_bullet"], 150, 80)
-            self.killed_hidden = [None] * len(self.enemies)
-            print("NEXT LEVEL !!")
-            start_time = pygame.time.get_ticks()
-            delay(10, self.timer_level, start_time)
+        if len(self.killed_hidden) >= self.enemies_num:
+            if not self.switch_level:
+                self.last_update = pygame.time.get_ticks()
+                self.switch_level = True
+
+                if level == 1 and wave == 3:
+                    self.boss_time = True
+                    self.sprites["its-a-boss"].show_frames(window, (WIDTH / 2 - (self.itsaboss_img_size / 2), HEIGHT / 2 - (self.itsaboss_img_size / 2)))
+
+                else:
+                    update_wave()
+                    self.new_set_label.update("LEVEL " + str(level) + ": Wave " + str(wave) + " of 3", (255, 255, 0))
+
             # self.sprites["win"].show_frames(window, (WIDTH / 2 - (self.win_img_size / 2), HEIGHT / 2 - (self.win_img_size / 2)))
 
 
@@ -1003,7 +1066,9 @@ class Singleplayer(Scene):
         self.p1_title_label.show(window)
         self.p1_points_label.show(window)
 
-        self.timer_level = 0
+        if self.switch_level:
+            self.new_set_label.show(window)
+
 
 """""""""""""""""""""""""""
     MULTIPLAYER GAME SCENE
@@ -1081,7 +1146,7 @@ class Multiplayer(Scene):
         for enemy in self.enemies:
             if enemy.helth <= 0:
                 self.enemy_explode_sfx.play()
-                tmp = enemy
+                tmp = enemys
                 self.enemies.remove(enemy)
                 if tmp.hit_by_player_num == 1:
                     self.player1.points += tmp.worth

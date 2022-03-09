@@ -29,6 +29,7 @@ PLAYER1_COLOR = (17, 255, 0)
 PLAYER2_COLOR = (0, 200, 255)
 
 IMAGE_SCALE: float = 0.5
+BOSS_IMAGE_SCALE: float = 1.0
 FRAME_OFFSET: int = 256
 
 BULLET_W = 50
@@ -38,6 +39,8 @@ SETTINGS = 'assets/settings/settings.txt'
 
 # globals
 image_size = (FRAME_OFFSET * IMAGE_SCALE)
+boss_image_size = (FRAME_OFFSET * BOSS_IMAGE_SCALE)
+
 sound_state = 1
 enemy_hit_sfxs = [ENEMY_HIT_1, ENEMY_HIT_2, ENEMY_HIT_3]
 player_hit_sfxs = [PLAYER_HIT_1, PLAYER_HIT_2, PLAYER_HIT_3]

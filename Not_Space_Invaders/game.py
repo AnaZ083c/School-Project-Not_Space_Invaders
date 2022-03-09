@@ -39,7 +39,7 @@ generic_enemy_sprites = Sprite(sprite_sheet, 1, (0, FRAME_OFFSET * 2))
 enemies_list.append(generic_enemy_sprites)
 
 # boss sprites
-angry_alien_boss = Sprite(sprite_sheet, 1, (1, FRAME_OFFSET * 2))
+angry_alien_boss = Sprite(sprite_sheet, 1, (1, FRAME_OFFSET * 2), BOSS_IMAGE_SCALE)
 eye_boss = Sprite(sprite_sheet, 5, (0, FRAME_OFFSET * 3), False)
 
 # boss and or enemy
@@ -77,7 +77,9 @@ sprites = {
     "enemies": enemies_list,
     "enemy_bullet": en_bullet_sprites,
     "death": deth_sprite,
-    "win": win_sprite
+    "win": win_sprite,
+    "its-a-boss": its_a_boss,
+    "first-boss": angry_alien_boss
 }
 
 

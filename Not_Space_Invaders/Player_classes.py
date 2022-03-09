@@ -28,6 +28,7 @@ class Player:
 
         self.frame = 0  # idle
         self.move_speed = 5
+        self.original_speed = self.move_speed
         self.bullet_speed = 10
         self.is_moving = False
         self.keyboard_controls = {"up": pygame.K_UP,
@@ -41,6 +42,7 @@ class Player:
         self.shooting = False
 
         self.bullet_cooldown = 0
+        self.speedup = False
 
         self.get_hearts_xys()
 
@@ -89,26 +91,36 @@ class Player:
 
                     self.x += self.motion[0] * self.move_speed
                     self.y += self.motion[1] * self.move_speed
+
+                    if self.speedup:
+                        self.move_speed *= 20
+                        self.speedup = False
+                    else:
+                        self.move_speed = self.original_speed
             self.out_of_bounds_handler()
             self.bullet_collision_handler(bullet_list)
 
     def event_handler(self, event: pygame.event):
         # print(self.shooting)
-
         if event.type == pygame.JOYBUTTONDOWN:
             if event.joy == self.joysticks[self.joystick_index][1]:
+                # print(event.button)
                 if event.button == 0:
                     self.shooting = True
                     self.sfx.play()
                     self.bullets.append(Bullet(self.bullet_sprites, self, self.x, self.y))
+                if event.button == 5:
+                    self.speedup = True
         if event.type == pygame.JOYBUTTONUP:
             if event.joy == self.joysticks[self.joystick_index][1]:
                 if event.button == 0:
                     self.shooting = False
         if event.type == pygame.JOYAXISMOTION:
             if event.joy == self.joysticks[self.joystick_index][1]:
+                # print(event.axis)
                 if event.axis < 2:
                     self.motion[event.axis] = event.value
+
         if event.type == pygame.JOYHATMOTION:
             if event.joy == self.joysticks[self.joystick_index][1]:
                 pass
@@ -126,6 +138,7 @@ class Player:
     # change moving speed
     def set_move_speed(self, new_move_speed):
         self.move_speed = new_move_speed
+        self.original_speed = self.move_speed
 
     # change keys
     def set_controls(self, new_controls: dict):
@@ -153,7 +166,7 @@ class Player:
                 self.health -= 1
                 if self.health <= 0:
                     self.explode_sfx.play()
-                print('player', self.health)
+                # print('player', self.health)
 
                 if self.current_hit_sfx < len(player_hit_sfxs) - 1:
                     self.current_hit_sfx += 1
@@ -198,7 +211,7 @@ class Bullet:
         self.frame = 2
 
     def collision_handler(self):
-        print("bullet ", self.hit)
+        # print("bullet ", self.hit)
         if self.hit:
             self.frame = 0
 
