@@ -1,3 +1,5 @@
+import random
+
 from Sprite import Sprite, Animation
 import Player_classes as pc
 from constants_and_globals import *
@@ -160,10 +162,10 @@ class Boss(Enemy):
         # everything after that loop depends on the boss
 
 
-class FirstBoss(Boss):
+class FirstBoss(Boss):  # ANGRY ALIEN BOSS
     def __init__(self, boss_sprites, x, y, bullet_sprites, shoot_cooldown=40.0, worth=1000):
         super(FirstBoss, self).__init__(boss_sprites, x, y, bullet_sprites, shoot_cooldown, worth)
-        self.helth = 15
+        self.helth = 100
 
     def update(self, bullet_list):
         current_time = pygame.time.get_ticks()
@@ -183,6 +185,25 @@ class FirstBoss(Boss):
         self.bullet_collision_handler(bullet_list)
         self.out_of_bounds_handler()
 
+    def bullet_collision_handler(self, bullet_list):
+        for bullet in bullet_list:
+            if (self.x - 100 <= bullet.x <= self.x + 100) and (self.y - 100 <= bullet.y <= self.y + 100):
+                self.hit_sfx.play()
+                bullet.hit = True
+                self.was_hit = True
+                self.helth -= 1
+                self.hit_by_player_num = bullet.owner.player_num
+                if self.current_hit_sfx < len(enemy_hit_sfxs) - 1:
+                    self.current_hit_sfx += 1
+                else:
+                    self.current_hit_sfx = 0
+                self.hit_sfx = pygame.mixer.Sound(enemy_hit_sfxs[self.current_hit_sfx])
+                # print(self.helth)
+            else:
+                continue
+                # bullet.hit = False
+                # self.was_hit = False
+
     def out_of_bounds_handler(self):
         if self.x + boss_image_size > WIDTH:
             self.x = WIDTH - boss_image_size
@@ -199,6 +220,337 @@ class FirstBoss(Boss):
         super(FirstBoss, self).show(window)
 
         window.screen.blit(self.enemy_sprites.frames[0], (self.x, self.y))
+
+
+class SecondBoss(Boss):  # OCTOPUS BOSS
+    def __init__(self, boss_sprites, x, y, bullet_sprites, shoot_cooldown=40.0, worth=1000):
+        super(SecondBoss, self).__init__(boss_sprites, x, y, bullet_sprites, shoot_cooldown, worth)
+        self.helth = 200
+        self.animation = Animation(boss_sprites, 300)
+
+        """
+            kombinacije:
+            x | 0  0  1 -1
+            --+-----------
+            y | 1 -1  0  0
+        """
+        self.direction_x = 1  # 0, 1, -1
+        self.direction_y = 0  # 0, 1, -1
+        self.directions = [1, 0]  # x, y
+
+    def update(self, bullet_list):
+        current_time = pygame.time.get_ticks()
+        if self.y + boss_image_size < HEIGHT:
+            if current_time - self.last_update >= self.shoot_cooldown:  # if 500 ms have passed, move on to the next frame
+                self.timer += 1
+                self.last_update = current_time
+                if self.timer >= self.shoot_cooldown:
+                    # play shoot sfx
+                    self.sfx.play()
+                    # shoot
+                    self.en_bullets.append(pc.Bullet(self.bullet_sprites, self, self.x, self.y))
+                    self.timer = 0
+
+        self.x += (self.move_speed * self.directions[0])
+        self.y += (self.move_speed * self.directions[1])
+
+        self.bullet_collision_handler(bullet_list)
+        self.out_of_bounds_handler()
+
+    def bullet_collision_handler(self, bullet_list):
+        for bullet in bullet_list:
+            if (self.x - 100 <= bullet.x <= self.x + 100) and (self.y - 100 <= bullet.y <= self.y + 100):
+                self.hit_sfx.play()
+                bullet.hit = True
+                self.was_hit = True
+                self.helth -= 1
+                self.hit_by_player_num = bullet.owner.player_num
+                if self.current_hit_sfx < len(enemy_hit_sfxs) - 1:
+                    self.current_hit_sfx += 1
+                else:
+                    self.current_hit_sfx = 0
+                self.hit_sfx = pygame.mixer.Sound(enemy_hit_sfxs[self.current_hit_sfx])
+                # print(self.helth)
+            else:
+                continue
+                # bullet.hit = False
+                # self.was_hit = False
+
+    def out_of_bounds_handler(self):
+        if self.x + boss_image_size > WIDTH:
+            self.x = WIDTH - boss_image_size
+            self.directions[0] = -1
+            self.directions[1] = random.randrange(-1, 2, 1)
+        if self.x < 0:
+            self.x = 0
+            self.directions[0] = 1
+            self.directions[1] = random.randrange(-1, 2, 1)
+        if self.y + boss_image_size >= HEIGHT:
+            self.y = HEIGHT - boss_image_size
+            self.directions[0] = random.randrange(-1, 2, 1)
+            self.directions[1] = -1
+        if self.y < 0:
+            self.y = 0
+            self.directions[0] = random.randrange(-1, 2, 1)
+            self.directions[1] = 1
+
+    def show(self, window: Window):
+        super(SecondBoss, self).show(window)
+
+        self.animation.animate(window, self.x, self.y)
+        # window.screen.blit(self.enemy_sprites.frames[0], (self.x, self.y))
+
+
+class ThirdBoss(Boss):  # ROBOT BOSS
+    def __init__(self, boss_sprites, x, y, bullet_sprites, shoot_cooldown=40.0, worth=1000):
+        super(ThirdBoss, self).__init__(boss_sprites, x, y, bullet_sprites, shoot_cooldown, worth)
+        self.helth = 300
+        # self.animation = Animation(boss_sprites, 300)
+
+        self.direction_x = 1  # 0, 1, -1
+        self.direction_y = 0  # 0, 1, -1
+        self.directions = [1, 0]  # x, y
+        self.full_helth = self.helth
+
+        self.current_frame = 0
+
+    def update(self, bullet_list):
+        current_time = pygame.time.get_ticks()
+        if self.y + boss_image_size < HEIGHT:
+            if current_time - self.last_update >= self.shoot_cooldown:  # if 500 ms have passed, move on to the next frame
+                self.timer += 1
+                self.last_update = current_time
+                if self.timer >= self.shoot_cooldown:
+                    # play shoot sfx
+                    self.sfx.play()
+                    # shoot
+                    self.en_bullets.append(pc.Bullet(self.bullet_sprites, self, self.x, self.y))
+                    self.timer = 0
+
+        self.x += (self.move_speed * self.directions[0])
+        self.y += (self.move_speed * self.directions[1])
+
+        if self.full_helth >= self.helth > self.full_helth//2:
+            self.current_frame = 0
+        elif self.full_helth//3 >= self.helth > self.full_helth//4:
+            self.current_frame = random.randint(1, 2)
+        elif self.helth >= self.full_helth//5:
+            self.current_frame = 3
+
+        self.bullet_collision_handler(bullet_list)
+        self.out_of_bounds_handler()
+
+    def bullet_collision_handler(self, bullet_list):
+        for bullet in bullet_list:
+            if (self.x - 100 <= bullet.x <= self.x + 100) and (self.y - 100 <= bullet.y <= self.y + 100):
+                self.hit_sfx.play()
+                bullet.hit = True
+                self.was_hit = True
+                self.helth -= 1
+                self.hit_by_player_num = bullet.owner.player_num
+                if self.current_hit_sfx < len(enemy_hit_sfxs) - 1:
+                    self.current_hit_sfx += 1
+                else:
+                    self.current_hit_sfx = 0
+                self.hit_sfx = pygame.mixer.Sound(enemy_hit_sfxs[self.current_hit_sfx])
+                # print(self.helth)
+            else:
+                continue
+                # bullet.hit = False
+                # self.was_hit = False
+
+    def out_of_bounds_handler(self):
+        if self.x + boss_image_size > WIDTH:
+            self.x = WIDTH - boss_image_size
+            self.directions[0] = -1
+            self.directions[1] = random.randrange(-1, 2, 1)
+        if self.x < 0:
+            self.x = 0
+            self.directions[0] = 1
+            self.directions[1] = random.randrange(-1, 2, 1)
+        if self.y + boss_image_size >= HEIGHT:
+            self.y = HEIGHT - boss_image_size
+            self.directions[0] = random.randrange(-1, 2, 1)
+            self.directions[1] = -1
+        if self.y < 0:
+            self.y = 0
+            self.directions[0] = random.randrange(-1, 2, 1)
+            self.directions[1] = 1
+
+    def show(self, window: Window):
+        super(ThirdBoss, self).show(window)
+
+        # self.animation.animate(window, self.x, self.y)
+        window.screen.blit(self.enemy_sprites.frames[self.current_frame], (self.x, self.y))
+
+
+class FourthBoss(Boss):  # EYE BOSS
+    def __init__(self, boss_sprites, x, y, bullet_sprites, shoot_cooldown=40.0, worth=1000):
+        super(FourthBoss, self).__init__(boss_sprites, x, y, bullet_sprites, shoot_cooldown, worth)
+        self.helth = 400
+        # self.animation = Animation(boss_sprites, 300)
+
+        self.direction_x = 1  # 0, 1, -1
+        self.direction_y = 0  # 0, 1, -1
+        self.directions = [1, 0]  # x, y
+        self.full_helth = self.helth
+
+        self.current_frame = 0
+        self.dir_index = 0
+
+    def update(self, bullet_list):
+        current_time = pygame.time.get_ticks()
+        if self.y + boss_image_size < HEIGHT:
+            if current_time - self.last_update >= self.shoot_cooldown:  # if 500 ms have passed, move on to the next frame
+                self.timer += 1
+                self.last_update = current_time
+                if self.timer >= self.shoot_cooldown:
+                    # play shoot sfx
+                    self.sfx.play()
+                    # shoot
+                    self.en_bullets.append(pc.Bullet(self.bullet_sprites, self, self.x, self.y))
+                    self.timer = 0
+
+        self.x += (self.move_speed * self.directions[0])
+        self.y += (self.move_speed * self.directions[1])
+
+        # calculate the current frame
+        if self.directions[0] == -1:  # levo
+            self.current_frame = 1
+        elif self.directions[0] == 1:  # desno
+            self.current_frame = 2
+
+        if self.directions[1] == -1:  # gor
+            self.current_frame = 4
+        elif self.directions[1] == 1:  # dol
+            self.current_frame = 3
+
+        if self.directions[0] == 0 and self.directions[1] == 0:
+            self.current_frame = 0
+
+        self.bullet_collision_handler(bullet_list)
+        self.out_of_bounds_handler()
+
+    def bullet_collision_handler(self, bullet_list):
+        for bullet in bullet_list:
+            if (self.x - 100 <= bullet.x <= self.x + 100) and (self.y - 100 <= bullet.y <= self.y + 100):
+                self.hit_sfx.play()
+                bullet.hit = True
+                self.was_hit = True
+                self.helth -= 1
+                self.hit_by_player_num = bullet.owner.player_num
+                if self.current_hit_sfx < len(enemy_hit_sfxs) - 1:
+                    self.current_hit_sfx += 1
+                else:
+                    self.current_hit_sfx = 0
+                self.hit_sfx = pygame.mixer.Sound(enemy_hit_sfxs[self.current_hit_sfx])
+                # print(self.helth)
+            else:
+                continue
+                # bullet.hit = False
+                # self.was_hit = False
+
+    def out_of_bounds_handler(self):
+        if self.x + boss_image_size > WIDTH:
+            self.x = WIDTH - boss_image_size
+            self.directions[0] = -1
+            self.directions[1] = random.randrange(-1, 2, 1)
+        if self.x < 0:
+            self.x = 0
+            self.directions[0] = 1
+            self.directions[1] = random.randrange(-1, 2, 1)
+        if self.y + boss_image_size >= HEIGHT:
+            self.y = HEIGHT - boss_image_size
+            self.directions[0] = random.randrange(-1, 2, 1)
+            self.directions[1] = -1
+        if self.y < 0:
+            self.y = 0
+            self.directions[0] = random.randrange(-1, 2, 1)
+            self.directions[1] = 1
+
+    def show(self, window: Window):
+        super(FourthBoss, self).show(window)
+
+        window.screen.blit(self.enemy_sprites.frames[self.current_frame], (self.x, self.y))
+
+
+class FinalBoss(Boss):  # SHIP BOSS
+    def __init__(self, boss_sprites, x, y, bullet_sprites, shoot_cooldown=40.0, worth=1000):
+        super(FinalBoss, self).__init__(boss_sprites, x, y, bullet_sprites, shoot_cooldown, worth)
+        self.helth = 500
+        # self.animation = Animation(boss_sprites, 300)
+
+        self.directions = [1, 0]  # x, y
+        self.current_frame = 0
+
+    def update(self, bullet_list):
+        current_time = pygame.time.get_ticks()
+        if self.y + boss_image_size < HEIGHT:
+            if current_time - self.last_update >= self.shoot_cooldown:  # if 500 ms have passed, move on to the next frame
+                self.timer += 1
+                self.last_update = current_time
+                if self.timer >= self.shoot_cooldown:
+                    # play shoot sfx
+                    self.sfx.play()
+                    # shoot
+                    self.en_bullets.append(pc.Bullet(self.bullet_sprites, self, self.x, self.y))
+                    self.timer = 0
+
+        self.x += (self.move_speed * self.direction)
+
+        # calculate the current frame
+        if self.directions[0] == -1:
+            self.current_frame = 1
+        elif self.directions[0] == 1:
+            self.current_frame = 2
+
+        self.bullet_collision_handler(bullet_list)
+        self.out_of_bounds_handler()
+
+    def bullet_collision_handler(self, bullet_list):
+        for bullet in bullet_list:
+            if (self.x - 100 <= bullet.x <= self.x + 100) and (self.y - 100 <= bullet.y <= self.y + 100):
+                self.hit_sfx.play()
+                bullet.hit = True
+                self.was_hit = True
+                self.helth -= 1
+                self.hit_by_player_num = bullet.owner.player_num
+                if self.current_hit_sfx < len(enemy_hit_sfxs) - 1:
+                    self.current_hit_sfx += 1
+                else:
+                    self.current_hit_sfx = 0
+                self.hit_sfx = pygame.mixer.Sound(enemy_hit_sfxs[self.current_hit_sfx])
+                # print(self.helth)
+            else:
+                continue
+                # bullet.hit = False
+                # self.was_hit = False
+
+    def out_of_bounds_handler(self):
+        if self.x + boss_image_size > WIDTH:
+            self.x = WIDTH - boss_image_size
+            self.directions[0] = -1
+            self.directions[1] = random.randrange(-1, 2, 1)
+        if self.x < 0:
+            self.x = 0
+            self.directions[0] = 1
+            self.directions[1] = random.randrange(-1, 2, 1)
+        if self.y + boss_image_size >= HEIGHT:
+            self.y = HEIGHT - boss_image_size
+            self.directions[0] = random.randrange(-1, 2, 1)
+            self.directions[1] = -1
+        if self.y < 0:
+            self.y = 0
+            self.directions[0] = random.randrange(-1, 2, 1)
+            self.directions[1] = 1
+
+    def show(self, window: Window):
+        super(FinalBoss, self).show(window)
+
+        window.screen.blit(self.enemy_sprites.frames[self.current_frame], (self.x, self.y))
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 
 class Enemies:

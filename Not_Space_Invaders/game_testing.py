@@ -12,12 +12,6 @@ import pygame
 
 # init
 pygame.init()
-pygame.mixer.pre_init(44100, -16, 2, 1024)
-pygame.mixer.init(44100, -16, 2, 1024)
-pygame.mixer.set_num_channels(128)
-pygame.mixer.music.load(THEME)
-pygame.mixer.music.set_volume(0.5)
-pygame.mixer.music.play(-1)
 
 # window
 window = Window()
@@ -83,7 +77,7 @@ win_img_size = FRAME_OFFSET * win_sprite.scale
 player1_animation = Animation(player1_sprites, 500)
 bullet_animation = Animation(bullet_sprites, 80)
 
-octoboss = Animation(octopus_boss, 500)
+octoboss_animation = Animation(octopus_boss, 300)
 
 player1 = Player(helth_sprite, player1_sprites, image_size, HEIGHT-image_size, bullet_sprites, joysticks, 1)
 player2 = Player(helth_sprite, player2_sprites, image_size+image_size, HEIGHT-image_size, bullet_sprites, joysticks, 2)
@@ -125,10 +119,6 @@ while window.running:
 
     """"""""""""""""""""""""""""""""""""" process input (events) """""""""""""""""""""""""""""""""""""
     for event in pygame.event.get():
-        if player1.health > 0:
-            player1.event_handler(event)
-        if player2.health > 0:
-            player2.event_handler(event)
 
         if event.type == pygame.QUIT:  # if X was clicked
             window.running = False
@@ -139,31 +129,7 @@ while window.running:
     """"""""""""""""""""""""""""""""""""""""""""" update """""""""""""""""""""""""""""""""""""""""""""
     keys = pygame.key.get_pressed()  # checking pressed keys
 
-    # getting all enemy bullets
-    en_bullets = []
-    for enemy in enemies:
-        en_bullets += enemy.en_bullets
-    print(en_bullets)
 
-    # player updates
-    player1.update(keys, en_bullets)
-    player2.update(keys, en_bullets)
-    p1_points_label.update(str(player1.points), TITANIUM_HWHITE)
-    p2_points_label.update(str(player2.points), TITANIUM_HWHITE)
-
-    # enemy update
-    for enemy in enemies:
-        enemy.update(player1.bullets + player2.bullets, enemies, True)
-
-    # enemy health checker
-    for enemy in enemies:
-        if enemy.helth <= 0:
-            tmp = enemy
-            enemies.remove(enemy)
-            if tmp.hit_by_player_num == 1:
-                player1.points += tmp.worth
-            elif tmp.hit_by_player_num == 2:
-                player2.points += tmp.worth
 
     """"""""""""""""""""""""""""""""""""""" draw/render """""""""""""""""""""""""""""""""""""""
     window.screen.fill(BLACK)
@@ -173,25 +139,7 @@ while window.running:
         star.check_if_i_should_reappear_on_top()
 
     # show frame image
-    player1.show(window)
-    player2.show(window)
-
-    for enemy in enemies:
-        enemy.show(window)
-
-    if len(enemies) != 0 and player1.health <= 0 and player2.health <= 0:
-        deth_sprite.show_frames(window, (WIDTH/2 - (deth_img_size/2), HEIGHT/2 - (deth_img_size/2)))
-    if len(enemies) == 0:
-        win_sprite.show_frames(window, (WIDTH / 2 - (win_img_size / 2), HEIGHT / 2 - (win_img_size / 2)))
-
-    # Player 1 GUI
-    p1_title_label.show(window)
-    p1_points_label.show(window)
-
-    # Player 2 GUI
-    p2_title_label.show(window)
-    p2_points_label.show(window)
-
+    octoboss_animation.animate(window, WIDTH / 2, HEIGHT / 2)
     """""""""""""""""""""""""""""""""""""""" flip display """""""""""""""""""""""""""""""""""""""""
     pygame.display.flip()  # always after drawing everything!!
 

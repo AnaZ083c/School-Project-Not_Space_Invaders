@@ -39,14 +39,15 @@ generic_enemy_sprites = Sprite(sprite_sheet, 1, (0, FRAME_OFFSET * 2))
 enemies_list.append(generic_enemy_sprites)
 
 # boss sprites
-angry_alien_boss = Sprite(sprite_sheet, 1, (1, FRAME_OFFSET * 2), BOSS_IMAGE_SCALE)
-eye_boss = Sprite(sprite_sheet, 5, (0, FRAME_OFFSET * 3), False)
+angry_alien_boss = Sprite(sprite_sheet, 1, (1, FRAME_OFFSET * 2), False, BOSS_IMAGE_SCALE)
+eye_boss = Sprite(sprite_sheet, 5, (0, FRAME_OFFSET * 3), False, BOSS_IMAGE_SCALE)
 
 # boss and or enemy
-octopus_boss = Sprite(sprite_sheet, 2, (1, FRAME_OFFSET * 3), False)
+octopus_boss = Sprite(sprite_sheet, 2, (1, FRAME_OFFSET * 3), False, BOSS_IMAGE_SCALE)
 enemies_list.append(octopus_boss)
 
-robot_boss = Sprite(sprite_sheet, 4, (2, FRAME_OFFSET * 3), False)
+robot_boss = Sprite(sprite_sheet, 4, (2, FRAME_OFFSET * 3), False, BOSS_IMAGE_SCALE)
+
 
 # health sprites
 helth_sprite = Sprite(sprite_sheet, 1, (2, FRAME_OFFSET * 2), True, 0.2)
@@ -69,6 +70,8 @@ its_a_boss = Sprite(sprite_sheet, 1, (4, FRAME_OFFSET * 2))
 win_sprite = Sprite(sprite_sheet, 1, (5, 0), True, 2.5)
 win_img_size = FRAME_OFFSET * win_sprite.scale
 
+octoboss_animation = Animation(octopus_boss, 300)
+
 sprites = {
     "heart": helth_sprite,
     "player1": player1_sprites,
@@ -79,7 +82,12 @@ sprites = {
     "death": deth_sprite,
     "win": win_sprite,
     "its-a-boss": its_a_boss,
-    "first-boss": angry_alien_boss
+    "first-boss": angry_alien_boss,
+    "second-boss": octopus_boss,
+    "second-boss-animation": octoboss_animation,
+    "third-boss": robot_boss,
+    "fourth-boss": eye_boss,
+    "final-boss": player_boss_sprites
 }
 
 

@@ -219,7 +219,7 @@ class Bullet:
         self.collision_handler()
 
     def show(self, window: Window, bullet_speed, down_to_up: bool = True):
-        self.animation.update(window, self.x, self.y, False)
+        self.animation.animate(window, self.x, self.y, False)
         if down_to_up:
             if self.y > 0:
                 self.y -= bullet_speed
