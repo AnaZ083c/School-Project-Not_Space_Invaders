@@ -32,46 +32,57 @@ sprite_sheet = SpriteSheet(SPRITE_SHEET)
 # player sprites
 player1_sprites = Sprite(sprite_sheet)
 player2_sprites = Sprite(sprite_sheet, 3, (0, FRAME_OFFSET), True)
+fuel_fire = Sprite(sprite_sheet, 3, (4, 0), False)
+dash = Sprite(sprite_sheet, 2, (1, FRAME_OFFSET * 5), False)
+
+explosion_sprites = Sprite(sprite_sheet, 3, (5, FRAME_OFFSET), False)
 
 # bullet sprites
-bullet_sprites = Sprite(sprite_sheet, 3, (3, FRAME_OFFSET*4), False)
-en_bullet_sprites = Sprite(sprite_sheet, 3, (4, FRAME_OFFSET*4), False)
+bullet_sprites = Sprite(sprite_sheet, 3, (3, FRAME_OFFSET * 4), False)
+en_bullet_sprites = Sprite(sprite_sheet, 3, (4, FRAME_OFFSET * 4), False)
+purple_bullet = Sprite(sprite_sheet, 3, (5, 4 * FRAME_OFFSET), False)
+blue_bullet = Sprite(sprite_sheet, 2, (6, 5 * FRAME_OFFSET), False)
+yellow_bullet = Sprite(sprite_sheet, 3, (7, 4 * FRAME_OFFSET), False)
 
 player_boss_sprites = Sprite(sprite_sheet, 3, (3, 0), False)  # a special boss
 
+# pickup sprites
+heal_pickup = Sprite(sprite_sheet, 1, (6, 0))
+yellow_pickup = Sprite(sprite_sheet, 1, (6, FRAME_OFFSET))
+green_pickup = Sprite(sprite_sheet, 1, (6, 2 * FRAME_OFFSET))
+blue_pickup = Sprite(sprite_sheet, 1, (6, 3 * FRAME_OFFSET))
+purple_pickup = Sprite(sprite_sheet, 1, (6, 4 * FRAME_OFFSET))
+
 # enemy sprites
 generic_enemy_sprites = Sprite(sprite_sheet, 1, (0, FRAME_OFFSET * 2))
+octopus_enemy_sprites = Sprite(sprite_sheet, 2, (7, 0), False)
+robot_enemy_sprites = Sprite(sprite_sheet, 2, (7, FRAME_OFFSET * 2), False)
 enemies_list.append(generic_enemy_sprites)
+enemies_list.append(octopus_enemy_sprites)
+enemies_list.append(robot_enemy_sprites)
 
 # boss sprites
-angry_alien_boss = Sprite(sprite_sheet, 1, (1, FRAME_OFFSET * 2))
-eye_boss = Sprite(sprite_sheet, 5, (0, FRAME_OFFSET * 3), False)
+angry_alien_boss = Sprite(sprite_sheet, 1, (1, FRAME_OFFSET * 2), False, BOSS_IMAGE_SCALE)
+eye_boss = Sprite(sprite_sheet, 5, (0, FRAME_OFFSET * 3), False, BOSS_IMAGE_SCALE)
+octopus_boss = Sprite(sprite_sheet, 2, (1, FRAME_OFFSET * 3), False, BOSS_IMAGE_SCALE)
+robot_boss = Sprite(sprite_sheet, 4, (2, FRAME_OFFSET * 3), False, BOSS_IMAGE_SCALE)
+boss_bar = Sprite(sprite_sheet, 6, (1, FRAME_OFFSET * 7), True, BOSS_IMAGE_SCALE)
 
-# boss and or enemy
-octopus_boss = Sprite(sprite_sheet, 2, (1, FRAME_OFFSET * 3), False)
-enemies_list.append(octopus_boss)
-
-robot_boss = Sprite(sprite_sheet, 4, (2, FRAME_OFFSET * 3), False)
 
 # health sprites
 helth_sprite = Sprite(sprite_sheet, 1, (2, FRAME_OFFSET * 2), True, 0.2)
+# helth_sprite.scale = ()
 helth_img_size = FRAME_OFFSET * helth_sprite.scale
 
 # death sprite
 deth_sprite = Sprite(sprite_sheet, 1, (4, FRAME_OFFSET * 3), True, 2.5)
 deth_img_size = FRAME_OFFSET * deth_sprite.scale
 
-# wave sprites
-wave1_sprite = Sprite(sprite_sheet, 1, (3, FRAME_OFFSET * 3))
-wave2_sprite = Sprite(sprite_sheet, 1, (4, 0))
-wave3_sprite = Sprite(sprite_sheet, 1, (4, FRAME_OFFSET))
-
-# it's a boss!! :o
-its_a_boss = Sprite(sprite_sheet, 1, (4, FRAME_OFFSET * 2))
-
 # win
 win_sprite = Sprite(sprite_sheet, 1, (5, 0), True, 2.5)
 win_img_size = FRAME_OFFSET * win_sprite.scale
+
+octoboss_animation = Animation(octopus_boss, 300)
 
 """"""""""""""""""""""""""""""""""""""""""""""""" ACTUAL GAME CODE """""""""""""""""""""""""""""""""""""""""""""""""
 player1_animation = Animation(player1_sprites, 500)
@@ -139,7 +150,8 @@ while window.running:
         star.check_if_i_should_reappear_on_top()
 
     # show frame image
-    octoboss_animation.animate(window, WIDTH / 2, HEIGHT / 2)
+    window.screen.blit(boss_bar.frames[5], (BOSS_IMAGE_SCALE + WIDTH/2.25, BOSS_IMAGE_SCALE))
+
     """""""""""""""""""""""""""""""""""""""" flip display """""""""""""""""""""""""""""""""""""""""
     pygame.display.flip()  # always after drawing everything!!
 

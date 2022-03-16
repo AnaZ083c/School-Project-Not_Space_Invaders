@@ -29,20 +29,20 @@ class SpriteSheet:
 
 
 class Sprite:
-    def __init__(self, sprite_sheet: SpriteSheet, num_of_frames: int = 3, xy_start=(0, 0), vertical: bool = True,
+    def __init__(self, sprite_sheet: SpriteSheet, num_of_frames: int = 3, xy_start=(0, 0), horizontal: bool = True,
                  scale: float = 0.5):
         self.sprite_sheet = sprite_sheet
         self.frames = []
         self.scale = scale  # IMAGE_SCALE
         self.img_size = FRAME_OFFSET * self.scale
 
-        self.init_frames(vertical, xy_start, num_of_frames)
+        self.init_frames(horizontal, xy_start, num_of_frames)
 
-    def init_frames(self, vertical, xy_start=(0, 0), num_of_frames: int = 3):
+    def init_frames(self, horizontal, xy_start=(0, 0), num_of_frames: int = 3):
         (x_start, y_start) = xy_start
         end_range = x_start + num_of_frames
         # a generic enemy only has one frame!
-        if not vertical:
+        if not horizontal:
             for i, j in zip(range(x_start, end_range), range(0, num_of_frames)):
                 self.frames.append(
                     self.sprite_sheet.get_image(x_start, 256, 256, self.scale, (x_start, y_start + j * FRAME_OFFSET)))

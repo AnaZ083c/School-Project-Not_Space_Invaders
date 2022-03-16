@@ -142,10 +142,29 @@ class Enemy:
 
 
 class Boss(Enemy):
-    def __init__(self, boss_sprites, x, y, bullet_sprites, shoot_cooldown=40.0, worth=15):
+    def __init__(self, boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown=40.0, worth=15):
         super(Boss, self).__init__(boss_sprites, x, y, bullet_sprites, shoot_cooldown, worth)
         self.defeated = False
         self.fighting = False
+        self.boss_bar = boss_bar
+        self.step = self.helth // (len(self.boss_bar.frames) - 1)
+        self.max_helth = self.helth
+        self.boss_bar_frame = None
+
+    def boss_bar_handler(self):
+        if self.helth < self.step:
+            self.boss_bar_frame = 5
+        if self.step <= self.helth < 2 * self.step:
+            self.boss_bar_frame = 4
+        if 2 * self.step <= self.helth < 3 * self.step:
+            self.boss_bar_frame = 3
+        if 3 * self.step <= self.helth < 4 * self.step:
+            self.boss_bar_frame = 2
+        if 4 * self.step <= self.helth < 5 * self.step:
+            self.boss_bar_frame = 1
+        if 5 * self.step <= self.helth < 6 * self.step:
+            self.boss_bar_frame = 0
+        print("BOSS BAR FRAME:", self.boss_bar_frame)
 
     def update(self, bullet_list):
         pass
@@ -163,8 +182,8 @@ class Boss(Enemy):
 
 
 class FirstBoss(Boss):  # ANGRY ALIEN BOSS
-    def __init__(self, boss_sprites, x, y, bullet_sprites, shoot_cooldown=40.0, worth=1000):
-        super(FirstBoss, self).__init__(boss_sprites, x, y, bullet_sprites, shoot_cooldown, worth)
+    def __init__(self, boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown=40.0, worth=1000):
+        super(FirstBoss, self).__init__(boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown, worth)
         self.helth = 100
 
     def update(self, bullet_list):
@@ -182,6 +201,7 @@ class FirstBoss(Boss):  # ANGRY ALIEN BOSS
 
         self.x += (self.move_speed * self.direction)
 
+        self.boss_bar_handler()
         self.bullet_collision_handler(bullet_list)
         self.out_of_bounds_handler()
 
@@ -220,11 +240,12 @@ class FirstBoss(Boss):  # ANGRY ALIEN BOSS
         super(FirstBoss, self).show(window)
 
         window.screen.blit(self.enemy_sprites.frames[0], (self.x, self.y))
+        window.screen.blit(self.boss_bar.frames[self.boss_bar_frame], (BOSS_IMAGE_SCALE + WIDTH / 2.25, BOSS_IMAGE_SCALE))
 
 
 class SecondBoss(Boss):  # OCTOPUS BOSS
-    def __init__(self, boss_sprites, x, y, bullet_sprites, shoot_cooldown=40.0, worth=1000):
-        super(SecondBoss, self).__init__(boss_sprites, x, y, bullet_sprites, shoot_cooldown, worth)
+    def __init__(self, boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown=40.0, worth=1000):
+        super(SecondBoss, self).__init__(boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown, worth)
         self.helth = 200
         self.animation = Animation(boss_sprites, 300)
 
@@ -254,6 +275,7 @@ class SecondBoss(Boss):  # OCTOPUS BOSS
         self.x += (self.move_speed * self.directions[0])
         self.y += (self.move_speed * self.directions[1])
 
+        self.boss_bar_handler()
         self.bullet_collision_handler(bullet_list)
         self.out_of_bounds_handler()
 
@@ -298,19 +320,20 @@ class SecondBoss(Boss):  # OCTOPUS BOSS
         super(SecondBoss, self).show(window)
 
         self.animation.animate(window, self.x, self.y)
+        window.screen.blit(self.boss_bar.frames[self.boss_bar_frame], (BOSS_IMAGE_SCALE + WIDTH / 2.25, BOSS_IMAGE_SCALE))
         # window.screen.blit(self.enemy_sprites.frames[0], (self.x, self.y))
 
 
 class ThirdBoss(Boss):  # ROBOT BOSS
-    def __init__(self, boss_sprites, x, y, bullet_sprites, shoot_cooldown=40.0, worth=1000):
-        super(ThirdBoss, self).__init__(boss_sprites, x, y, bullet_sprites, shoot_cooldown, worth)
+    def __init__(self, boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown=40.0, worth=1000):
+        super(ThirdBoss, self).__init__(boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown, worth)
         self.helth = 300
         # self.animation = Animation(boss_sprites, 300)
 
         self.direction_x = 1  # 0, 1, -1
         self.direction_y = 0  # 0, 1, -1
         self.directions = [1, 0]  # x, y
-        self.full_helth = self.helth
+        self.break_step = self.helth // 3
 
         self.current_frame = 0
 
@@ -330,13 +353,16 @@ class ThirdBoss(Boss):  # ROBOT BOSS
         self.x += (self.move_speed * self.directions[0])
         self.y += (self.move_speed * self.directions[1])
 
-        if self.full_helth >= self.helth > self.full_helth//2:
-            self.current_frame = 0
-        elif self.full_helth//3 >= self.helth > self.full_helth//4:
-            self.current_frame = random.randint(1, 2)
-        elif self.helth >= self.full_helth//5:
-            self.current_frame = 3
+        for i in range(0, 3):
+            if i * self.break_step <= self.max_helth < (i + 1) * self.break_step:
+                if i == 1:
+                    self.current_frame = random.randint(1, 2)
+                elif i == 2:
+                    self.current_frame = 3
+                else:
+                    self.current_frame = i
 
+        self.boss_bar_handler()
         self.bullet_collision_handler(bullet_list)
         self.out_of_bounds_handler()
 
@@ -382,11 +408,12 @@ class ThirdBoss(Boss):  # ROBOT BOSS
 
         # self.animation.animate(window, self.x, self.y)
         window.screen.blit(self.enemy_sprites.frames[self.current_frame], (self.x, self.y))
+        window.screen.blit(self.boss_bar.frames[self.boss_bar_frame], (BOSS_IMAGE_SCALE + WIDTH / 2.25, BOSS_IMAGE_SCALE))
 
 
 class FourthBoss(Boss):  # EYE BOSS
-    def __init__(self, boss_sprites, x, y, bullet_sprites, shoot_cooldown=40.0, worth=1000):
-        super(FourthBoss, self).__init__(boss_sprites, x, y, bullet_sprites, shoot_cooldown, worth)
+    def __init__(self, boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown=40.0, worth=1000):
+        super(FourthBoss, self).__init__(boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown, worth)
         self.helth = 400
         # self.animation = Animation(boss_sprites, 300)
 
@@ -428,6 +455,7 @@ class FourthBoss(Boss):  # EYE BOSS
         if self.directions[0] == 0 and self.directions[1] == 0:
             self.current_frame = 0
 
+        self.boss_bar_handler()
         self.bullet_collision_handler(bullet_list)
         self.out_of_bounds_handler()
 
@@ -472,11 +500,12 @@ class FourthBoss(Boss):  # EYE BOSS
         super(FourthBoss, self).show(window)
 
         window.screen.blit(self.enemy_sprites.frames[self.current_frame], (self.x, self.y))
+        window.screen.blit(self.boss_bar.frames[self.boss_bar_frame], (BOSS_IMAGE_SCALE + WIDTH / 2.25, BOSS_IMAGE_SCALE))
 
 
 class FinalBoss(Boss):  # SHIP BOSS
-    def __init__(self, boss_sprites, x, y, bullet_sprites, shoot_cooldown=40.0, worth=1000):
-        super(FinalBoss, self).__init__(boss_sprites, x, y, bullet_sprites, shoot_cooldown, worth)
+    def __init__(self, boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown=40.0, worth=1000):
+        super(FinalBoss, self).__init__(boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown, worth)
         self.helth = 500
         # self.animation = Animation(boss_sprites, 300)
 
@@ -504,6 +533,7 @@ class FinalBoss(Boss):  # SHIP BOSS
         elif self.directions[0] == 1:
             self.current_frame = 2
 
+        self.boss_bar_handler()
         self.bullet_collision_handler(bullet_list)
         self.out_of_bounds_handler()
 
@@ -548,6 +578,7 @@ class FinalBoss(Boss):  # SHIP BOSS
         super(FinalBoss, self).show(window)
 
         window.screen.blit(self.enemy_sprites.frames[self.current_frame], (self.x, self.y))
+        window.screen.blit(self.boss_bar.frames[self.boss_bar_frame], (BOSS_IMAGE_SCALE + WIDTH / 2.25, BOSS_IMAGE_SCALE))
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

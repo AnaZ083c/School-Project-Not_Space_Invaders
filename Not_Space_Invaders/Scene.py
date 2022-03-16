@@ -277,6 +277,11 @@ new_lw_xy = (WIDTH/2, HEIGHT/2 - 80)
 new_lw_label = Label("Level " + str(level) + ": wave " + str(wave) + " of 3", new_lw_xy[0], new_lw_xy[1],
                      (255, 255, 0), new_level_wave_font_size, FONT, 'center', new_lw_xy)
 
+boss_font_size = int(80)
+boss_label_xy = (WIDTH/2, HEIGHT/2 - 80)
+boss_label = Label("BOSS num. " + str(level), boss_label_xy[0], boss_label_xy[1],
+                   (255, 255, 0), boss_font_size, FONT, 'center', boss_label_xy)
+
 
 """""""""""""""""""""""""""
     CLASSES
@@ -936,7 +941,6 @@ class Singleplayer(Scene):
         self.heart_img_size = FRAME_OFFSET * self.sprites["heart"].scale
         self.death_img_size = FRAME_OFFSET * self.sprites["death"].scale
         self.win_img_size = FRAME_OFFSET * self.sprites["win"].scale
-        self.itsaboss_img_size = FRAME_OFFSET * self.sprites["its-a-boss"].scale
 
         self.player1 = Player(self.sprites["heart"], self.sprites["player1"],
                               image_size, HEIGHT-image_size, self.sprites["player_bullet"],
@@ -961,16 +965,18 @@ class Singleplayer(Scene):
 
         self.switch_level = False
         self.new_set_label = new_lw_label
+        self.boss_label = boss_label
         self.enemies_num = len(self.enemies)
 
         self.bosses = [
-            FirstBoss(self.sprites["first-boss"], WIDTH / 2, HEIGHT / 4, self.sprites["enemy_bullet"], 25.0),
-            SecondBoss(self.sprites["second-boss"], WIDTH / 2, HEIGHT / 4, self.sprites["enemy_bullet"], 25.0),
-            ThirdBoss(self.sprites["third-boss"], WIDTH / 2, HEIGHT / 4, self.sprites["enemy_bullet"], 25.0),
-            FourthBoss(self.sprites["fourth-boss"], WIDTH / 2, HEIGHT / 4, self.sprites["enemy_bullet"], 25.0),
-            FinalBoss(self.sprites["final-boss"], WIDTH / 2, HEIGHT / 4, self.sprites["enemy_bullet"], 25.0)
+            FirstBoss(self.sprites["boss-bar"], self.sprites["first-boss"], WIDTH / 2, HEIGHT / 4, self.sprites["enemy_bullet"], 100.0),
+            SecondBoss(self.sprites["boss-bar"], self.sprites["second-boss"], WIDTH / 2, HEIGHT / 4, self.sprites["enemy_bullet"], 100.0),
+            ThirdBoss(self.sprites["boss-bar"], self.sprites["third-boss"], WIDTH / 2, HEIGHT / 4, self.sprites["enemy_bullet"], 100.0),
+            FourthBoss(self.sprites["boss-bar"], self.sprites["fourth-boss"], WIDTH / 2, HEIGHT / 4, self.sprites["enemy_bullet"], 100.0),
+            FinalBoss(self.sprites["boss-bar"], self.sprites["final-boss"], WIDTH / 2, HEIGHT / 4, self.sprites["enemy_bullet"], 100.0)
         ]
         self.boss_time = False
+        self.show_boss_label = False
 
     def process_input(self, events, pressed_keys):
         global current_boss
@@ -992,6 +998,7 @@ class Singleplayer(Scene):
                     if self.boss_time:
                         self.timer = 0
                         print("BOSS")
+                        self.show_boss_label = False
 
                     else:
                         self.enemies = read_enemies(lvl_file, self.sprites["enemies"], self.sprites["enemy_bullet"], 150, 80)
@@ -1005,14 +1012,14 @@ class Singleplayer(Scene):
         for enemy in self.enemies:
             en_bullets += enemy.en_bullets
 
-        if self.boss_time:
+        if not self.show_boss_label and self.boss_time:
             en_bullets += self.bosses[current_boss].en_bullets
 
         self.player1.update(self.pressed_keys, en_bullets)
         self.p1_points_label.update(str(self.player1.points), TITANIUM_HWHITE)
 
         # boss update
-        if self.boss_time:
+        if not self.show_boss_label and self.boss_time:
             self.bosses[current_boss].update(self.player1.bullets)
 
         if self.bosses[current_boss].helth <= 0:
@@ -1048,7 +1055,7 @@ class Singleplayer(Scene):
 
         global current_boss
 
-        if self.boss_time and self.bosses[current_boss].helth > 0:
+        if not self.show_boss_label and self.boss_time and self.bosses[current_boss].helth > 0:
             self.bosses[current_boss].show(window)
 
         for enemy in self.enemies:
@@ -1069,7 +1076,7 @@ class Singleplayer(Scene):
                 if wave == 3:
                     self.last_update = pygame.time.get_ticks()
                     self.boss_time = True
-                    self.sprites["its-a-boss"].show_frames(window, (WIDTH / 2 - (self.itsaboss_img_size / 2), HEIGHT / 2 - (self.itsaboss_img_size / 2)))
+                    self.show_boss_label = True
 
                 else:
                     update_wave()
@@ -1084,6 +1091,9 @@ class Singleplayer(Scene):
 
         if self.switch_level and not self.boss_time:
             self.new_set_label.show(window)
+
+        if self.show_boss_label:
+            self.boss_label.show(window)
 
 
 """""""""""""""""""""""""""
