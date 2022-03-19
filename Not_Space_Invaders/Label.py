@@ -80,6 +80,11 @@ class Label:
         self.rect_pos = (self.x, self.y)
         self.__init__(self.string, self.x, self.y, self.color, self.size, self.font_file, self.position, self.rect_pos)
 
+    def change_y(self, new_y):
+        self.y = new_y
+        self.rect_pos = (self.x, self.y)
+        self.__init__(self.string, self.x, self.y, self.color, self.size, self.font_file, self.position, self.rect_pos)
+
     def show(self, window: Window):
         if len(self.position):
             window.screen.blit(self.text, self.text_rect)

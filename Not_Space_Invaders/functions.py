@@ -18,7 +18,7 @@ import random
 """
 
 
-def read_enemies(infilename: str, enemy_ids: list, bullet_sprites: Sprite, x_offset: int = 80, y_offset: int = 150, min_max_shoot_cooldown: tuple = (40.0, 100.0)):
+def read_enemies(infilename: str, enemy_ids: list, boom: Sprite, bullets: list, x_offset: int = 80, y_offset: int = 150, min_max_shoot_cooldown: tuple = (40.0, 100.0)):
     infile = open(infilename, "r")
     rows, cols = (0, 0)
     ch_num = 0
@@ -49,11 +49,15 @@ def read_enemies(infilename: str, enemy_ids: list, bullet_sprites: Sprite, x_off
 
             elif ids[j][i] == '1':
                 shoot_cooldown = random.randrange(int(min_), int(max_), 5)
-                enemy_sprite = Enemy(enemy_ids[0], curr_x_offset, curr_y_offset, bullet_sprites, shoot_cooldown)
+                enemy_sprite = Enemy(boom, enemy_ids[0], curr_x_offset, curr_y_offset, bullets[0], shoot_cooldown, 3, 1, 3)
                 enemies_list.append(enemy_sprite)
             elif ids[j][i] == '2':
                 shoot_cooldown = random.randrange(int(min_), int(max_), 5)
-                enemy_sprite = Enemy(enemy_ids[1], curr_x_offset, curr_y_offset, bullet_sprites, shoot_cooldown)
+                enemy_sprite = Enemy(boom, enemy_ids[1], curr_x_offset, curr_y_offset, bullets[1], shoot_cooldown, 5, 2, 5)
+                enemies_list.append(enemy_sprite)
+            elif ids[j][i] == '3':
+                shoot_cooldown = random.randrange(int(min_), int(max_), 5)
+                enemy_sprite = Enemy(boom, enemy_ids[2], curr_x_offset, curr_y_offset, bullets[2], shoot_cooldown, 7, 3, 7)
                 enemies_list.append(enemy_sprite)
 
     return enemies_list

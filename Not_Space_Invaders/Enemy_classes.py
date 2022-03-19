@@ -8,12 +8,19 @@ import pygame
 
 
 class Enemy:
-    def __init__(self, enemy_sprites: Sprite, x, y, bullet_sprites: Sprite, shoot_cooldown: float = 40.0, worth: int = 3):  # keyboard_controls = [ up, down, left, right ]
+    def __init__(self, boom: Sprite, enemy_sprites: Sprite, x, y, bullet_sprites: Sprite, shoot_cooldown: float = 40.0, worth: int = 3, dmg_give: int = 1, max_helth: int = 3):  # keyboard_controls = [ up, down, left, right ]
         self.enemy_sprites = enemy_sprites
-        self.helth = 3
+        self.enemy_animation = Animation(enemy_sprites, 400)
+        self.dmg_give = dmg_give
+
+        self.helth = max_helth
+        self.max_helth = max_helth
+
         self.was_hit = False
         self.worth = worth
         self.hit_by_player_num = 0
+        self.dmg_taken = 1
+        self.boom_animation = Animation(boom, 100)
 
         self.x = x
         self.y = y
@@ -26,7 +33,7 @@ class Enemy:
         self.bullet_sprites = bullet_sprites
         self.en_bullet_x = self.x
         self.en_bullet_y = self.y
-        self.en_bullet = pc.Bullet(bullet_sprites, self, self.en_bullet_x, self.en_bullet_y)
+        self.en_bullet = pc.Bullet(bullet_sprites, self, self.en_bullet_x, self.en_bullet_y, self.dmg_give)
 
         self.move_speed = 2
         self.bullet_speed = 2.5
@@ -44,6 +51,7 @@ class Enemy:
         self.explode_sfx = pygame.mixer.Sound(ENEMY_EXPLODE)
 
         self.moving_down = False
+        self.animate_boom = False
 
         # self.showing = True
 
@@ -58,12 +66,14 @@ class Enemy:
                     # play shoot sfx
                     self.sfx.play()
                     # shoot
-                    self.en_bullets.append(pc.Bullet(self.bullet_sprites, self, self.x, self.y))
+                    self.en_bullets.append(pc.Bullet(self.bullet_sprites, self, self.x, self.y, self.dmg_give))
                     self.timer = 0
         # else:
         #    self.showing = False
 
         self.x += (self.move_speed * self.direction)
+        if self.helth <= 0:
+            self.animate_boom = True
 
         self.bullet_collision_handler(bullet_list)
         self.out_of_bounds_handler(enemies, is_group)
@@ -112,7 +122,8 @@ class Enemy:
                 self.hit_sfx.play()
                 bullet.hit = True
                 self.was_hit = True
-                self.helth -= 1
+                self.helth -= bullet.dmg_give
+                print("bullet dmg = ", bullet.dmg_give)
                 self.hit_by_player_num = bullet.owner.player_num
                 if self.current_hit_sfx < len(enemy_hit_sfxs) - 1:
                     self.current_hit_sfx += 1
@@ -134,7 +145,8 @@ class Enemy:
             if bullet.y >= HEIGHT-100 or bullet.hit:
                 self.en_bullets.remove(bullet)
 
-        window.screen.blit(self.enemy_sprites.frames[0], (self.x, self.y))
+        self.enemy_animation.animate(window, self.x, self.y)
+        # window.screen.blit(self.enemy_sprites.frames[0], (self.x, self.y))
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -142,32 +154,19 @@ class Enemy:
 
 
 class Boss(Enemy):
-    def __init__(self, boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown=40.0, worth=15):
-        super(Boss, self).__init__(boss_sprites, x, y, bullet_sprites, shoot_cooldown, worth)
+    def __init__(self, boom, boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown=40.0, worth=15, dmg_give=1, max_helth=50):
+        super(Boss, self).__init__(boom, boss_sprites, x, y, bullet_sprites, shoot_cooldown, worth, dmg_give, max_helth)
         self.defeated = False
         self.fighting = False
         self.boss_bar = boss_bar
         self.step = self.helth // (len(self.boss_bar.frames) - 1)
         self.max_helth = self.helth
-        self.boss_bar_frame = None
-
-    def boss_bar_handler(self):
-        if self.helth < self.step:
-            self.boss_bar_frame = 5
-        if self.step <= self.helth < 2 * self.step:
-            self.boss_bar_frame = 4
-        if 2 * self.step <= self.helth < 3 * self.step:
-            self.boss_bar_frame = 3
-        if 3 * self.step <= self.helth < 4 * self.step:
-            self.boss_bar_frame = 2
-        if 4 * self.step <= self.helth < 5 * self.step:
-            self.boss_bar_frame = 1
-        if 5 * self.step <= self.helth < 6 * self.step:
-            self.boss_bar_frame = 0
-        print("BOSS BAR FRAME:", self.boss_bar_frame)
 
     def update(self, bullet_list):
         pass
+
+    def get_health_percent(self):
+        return (self.helth * 100) / self.max_helth
 
     def show(self, window: Window):
         for bullet in self.en_bullets:
@@ -182,9 +181,24 @@ class Boss(Enemy):
 
 
 class FirstBoss(Boss):  # ANGRY ALIEN BOSS
-    def __init__(self, boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown=40.0, worth=1000):
-        super(FirstBoss, self).__init__(boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown, worth)
-        self.helth = 100
+    def __init__(self, boom, boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown=40.0, worth=1000, dmg_give=1, max_helth=50):
+        super(FirstBoss, self).__init__(boom, boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown, worth, dmg_give, max_helth)
+        self.helth = 50
+        self.max_helth = 50
+        self.step = self.max_helth // len(boss_bar.frames)
+        self.boss_bar_frame = 0
+
+    def boss_bar_handler(self):
+        if self.get_health_percent() == 100:
+            self.boss_bar_frame = 0
+        elif 70 < self.get_health_percent() <= 80:
+            self.boss_bar_frame = 1
+        elif 60 < self.get_health_percent() <= 70:
+            self.boss_bar_frame = 2
+        elif 30 < self.get_health_percent() <= 50:
+            self.boss_bar_frame = 3
+        elif self.get_health_percent() <= 30:
+            self.boss_bar_frame = 4
 
     def update(self, bullet_list):
         current_time = pygame.time.get_ticks()
@@ -196,7 +210,7 @@ class FirstBoss(Boss):  # ANGRY ALIEN BOSS
                     # play shoot sfx
                     self.sfx.play()
                     # shoot
-                    self.en_bullets.append(pc.Bullet(self.bullet_sprites, self, self.x, self.y))
+                    self.en_bullets.append(pc.Bullet(self.bullet_sprites, self, self.x, self.y, self.dmg_give))
                     self.timer = 0
 
         self.x += (self.move_speed * self.direction)
@@ -207,11 +221,11 @@ class FirstBoss(Boss):  # ANGRY ALIEN BOSS
 
     def bullet_collision_handler(self, bullet_list):
         for bullet in bullet_list:
-            if (self.x - 100 <= bullet.x <= self.x + 100) and (self.y - 100 <= bullet.y <= self.y + 100):
+            if (self.x - 50 <= bullet.x <= self.x + boss_image_size-50) and (self.y - 50 <= bullet.y <= self.y + boss_image_size/2):
                 self.hit_sfx.play()
                 bullet.hit = True
                 self.was_hit = True
-                self.helth -= 1
+                self.helth -= bullet.dmg_give
                 self.hit_by_player_num = bullet.owner.player_num
                 if self.current_hit_sfx < len(enemy_hit_sfxs) - 1:
                     self.current_hit_sfx += 1
@@ -244,10 +258,13 @@ class FirstBoss(Boss):  # ANGRY ALIEN BOSS
 
 
 class SecondBoss(Boss):  # OCTOPUS BOSS
-    def __init__(self, boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown=40.0, worth=1000):
-        super(SecondBoss, self).__init__(boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown, worth)
-        self.helth = 200
+    def __init__(self, boom, boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown=40.0, worth=1000, dmg_give=2, max_helth=100):
+        super(SecondBoss, self).__init__(boom, boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown, worth, dmg_give, max_helth)
+        self.helth = 100
         self.animation = Animation(boss_sprites, 300)
+        self.max_helth = 100
+        self.step = self.max_helth // len(boss_bar.frames)
+        self.boss_bar_frame = 0
 
         """
             kombinacije:
@@ -259,6 +276,18 @@ class SecondBoss(Boss):  # OCTOPUS BOSS
         self.direction_y = 0  # 0, 1, -1
         self.directions = [1, 0]  # x, y
 
+    def boss_bar_handler(self):
+        if self.get_health_percent() == 100:
+            self.boss_bar_frame = 0
+        elif 70 < self.get_health_percent() <= 80:
+            self.boss_bar_frame = 1
+        elif 60 < self.get_health_percent() <= 70:
+            self.boss_bar_frame = 2
+        elif 30 < self.get_health_percent() <= 50:
+            self.boss_bar_frame = 3
+        elif self.get_health_percent() <= 30:
+            self.boss_bar_frame = 4
+
     def update(self, bullet_list):
         current_time = pygame.time.get_ticks()
         if self.y + boss_image_size < HEIGHT:
@@ -269,7 +298,7 @@ class SecondBoss(Boss):  # OCTOPUS BOSS
                     # play shoot sfx
                     self.sfx.play()
                     # shoot
-                    self.en_bullets.append(pc.Bullet(self.bullet_sprites, self, self.x, self.y))
+                    self.en_bullets.append(pc.Bullet(self.bullet_sprites, self, self.x, self.y, self.dmg_give))
                     self.timer = 0
 
         self.x += (self.move_speed * self.directions[0])
@@ -281,11 +310,11 @@ class SecondBoss(Boss):  # OCTOPUS BOSS
 
     def bullet_collision_handler(self, bullet_list):
         for bullet in bullet_list:
-            if (self.x - 100 <= bullet.x <= self.x + 100) and (self.y - 100 <= bullet.y <= self.y + 100):
+            if (self.x - 50 <= bullet.x <= self.x + boss_image_size-50) and (self.y - 50 <= bullet.y <= self.y + boss_image_size/2):
                 self.hit_sfx.play()
                 bullet.hit = True
                 self.was_hit = True
-                self.helth -= 1
+                self.helth -= bullet.dmg_give
                 self.hit_by_player_num = bullet.owner.player_num
                 if self.current_hit_sfx < len(enemy_hit_sfxs) - 1:
                     self.current_hit_sfx += 1
@@ -325,10 +354,13 @@ class SecondBoss(Boss):  # OCTOPUS BOSS
 
 
 class ThirdBoss(Boss):  # ROBOT BOSS
-    def __init__(self, boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown=40.0, worth=1000):
-        super(ThirdBoss, self).__init__(boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown, worth)
-        self.helth = 300
+    def __init__(self, boom, boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown=40.0, worth=1000, dmg_give=3, max_helth=150):
+        super(ThirdBoss, self).__init__(boom, boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown, worth, dmg_give, max_helth)
+        self.helth = 150
         # self.animation = Animation(boss_sprites, 300)
+        self.max_helth = 150
+        self.step = self.max_helth // len(boss_bar.frames)
+        self.boss_bar_frame = 0
 
         self.direction_x = 1  # 0, 1, -1
         self.direction_y = 0  # 0, 1, -1
@@ -336,6 +368,18 @@ class ThirdBoss(Boss):  # ROBOT BOSS
         self.break_step = self.helth // 3
 
         self.current_frame = 0
+
+    def boss_bar_handler(self):
+        if self.get_health_percent() == 100:
+            self.boss_bar_frame = 0
+        elif 70 < self.get_health_percent() <= 80:
+            self.boss_bar_frame = 1
+        elif 60 < self.get_health_percent() <= 70:
+            self.boss_bar_frame = 2
+        elif 30 < self.get_health_percent() <= 50:
+            self.boss_bar_frame = 3
+        elif self.get_health_percent() <= 30:
+            self.boss_bar_frame = 4
 
     def update(self, bullet_list):
         current_time = pygame.time.get_ticks()
@@ -347,7 +391,7 @@ class ThirdBoss(Boss):  # ROBOT BOSS
                     # play shoot sfx
                     self.sfx.play()
                     # shoot
-                    self.en_bullets.append(pc.Bullet(self.bullet_sprites, self, self.x, self.y))
+                    self.en_bullets.append(pc.Bullet(self.bullet_sprites, self, self.x, self.y, self.dmg_give))
                     self.timer = 0
 
         self.x += (self.move_speed * self.directions[0])
@@ -368,11 +412,11 @@ class ThirdBoss(Boss):  # ROBOT BOSS
 
     def bullet_collision_handler(self, bullet_list):
         for bullet in bullet_list:
-            if (self.x - 100 <= bullet.x <= self.x + 100) and (self.y - 100 <= bullet.y <= self.y + 100):
+            if (self.x - 50 <= bullet.x <= self.x + boss_image_size-50) and (self.y - 50 <= bullet.y <= self.y + boss_image_size/2):
                 self.hit_sfx.play()
                 bullet.hit = True
                 self.was_hit = True
-                self.helth -= 1
+                self.helth -= bullet.dmg_give
                 self.hit_by_player_num = bullet.owner.player_num
                 if self.current_hit_sfx < len(enemy_hit_sfxs) - 1:
                     self.current_hit_sfx += 1
@@ -412,10 +456,13 @@ class ThirdBoss(Boss):  # ROBOT BOSS
 
 
 class FourthBoss(Boss):  # EYE BOSS
-    def __init__(self, boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown=40.0, worth=1000):
-        super(FourthBoss, self).__init__(boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown, worth)
-        self.helth = 400
+    def __init__(self, boom, boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown=40.0, worth=1000, dmg_give=4, max_helth=200):
+        super(FourthBoss, self).__init__(boom, boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown, worth, dmg_give, max_helth)
+        self.helth = 200
         # self.animation = Animation(boss_sprites, 300)
+        self.max_helth = 200
+        self.step = self.max_helth // len(boss_bar.frames)
+        self.boss_bar_frame = 0
 
         self.direction_x = 1  # 0, 1, -1
         self.direction_y = 0  # 0, 1, -1
@@ -424,6 +471,18 @@ class FourthBoss(Boss):  # EYE BOSS
 
         self.current_frame = 0
         self.dir_index = 0
+
+    def boss_bar_handler(self):
+        if self.get_health_percent() == 100:
+            self.boss_bar_frame = 0
+        elif 70 < self.get_health_percent() <= 80:
+            self.boss_bar_frame = 1
+        elif 60 < self.get_health_percent() <= 70:
+            self.boss_bar_frame = 2
+        elif 30 < self.get_health_percent() <= 50:
+            self.boss_bar_frame = 3
+        elif self.get_health_percent() <= 30:
+            self.boss_bar_frame = 4
 
     def update(self, bullet_list):
         current_time = pygame.time.get_ticks()
@@ -435,7 +494,7 @@ class FourthBoss(Boss):  # EYE BOSS
                     # play shoot sfx
                     self.sfx.play()
                     # shoot
-                    self.en_bullets.append(pc.Bullet(self.bullet_sprites, self, self.x, self.y))
+                    self.en_bullets.append(pc.Bullet(self.bullet_sprites, self, self.x, self.y, self.dmg_give))
                     self.timer = 0
 
         self.x += (self.move_speed * self.directions[0])
@@ -461,11 +520,11 @@ class FourthBoss(Boss):  # EYE BOSS
 
     def bullet_collision_handler(self, bullet_list):
         for bullet in bullet_list:
-            if (self.x - 100 <= bullet.x <= self.x + 100) and (self.y - 100 <= bullet.y <= self.y + 100):
+            if (self.x - 50 <= bullet.x <= self.x + boss_image_size-50) and (self.y - 50 <= bullet.y <= self.y + boss_image_size/2):
                 self.hit_sfx.play()
                 bullet.hit = True
                 self.was_hit = True
-                self.helth -= 1
+                self.helth -= bullet.dmg_give
                 self.hit_by_player_num = bullet.owner.player_num
                 if self.current_hit_sfx < len(enemy_hit_sfxs) - 1:
                     self.current_hit_sfx += 1
@@ -504,13 +563,29 @@ class FourthBoss(Boss):  # EYE BOSS
 
 
 class FinalBoss(Boss):  # SHIP BOSS
-    def __init__(self, boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown=40.0, worth=1000):
-        super(FinalBoss, self).__init__(boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown, worth)
-        self.helth = 500
+    def __init__(self, boom, boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown=40.0, worth=5000, dmg_give=5, max_helth=250):
+        super(FinalBoss, self).__init__(boom, boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown, worth, dmg_give, max_helth)
+        self.helth = 250
         # self.animation = Animation(boss_sprites, 300)
+        self.max_helth = 250
+        self.step = self.max_helth // len(boss_bar.frames)
+        self.boss_bar_frame = 0
 
         self.directions = [1, 0]  # x, y
         self.current_frame = 0
+        self.move_speed = 4
+
+    def boss_bar_handler(self):
+        if self.get_health_percent() == 100:
+            self.boss_bar_frame = 0
+        elif 70 < self.get_health_percent() <= 80:
+            self.boss_bar_frame = 1
+        elif 60 < self.get_health_percent() <= 70:
+            self.boss_bar_frame = 2
+        elif 30 < self.get_health_percent() <= 50:
+            self.boss_bar_frame = 3
+        elif self.get_health_percent() <= 30:
+            self.boss_bar_frame = 4
 
     def update(self, bullet_list):
         current_time = pygame.time.get_ticks()
@@ -522,16 +597,19 @@ class FinalBoss(Boss):  # SHIP BOSS
                     # play shoot sfx
                     self.sfx.play()
                     # shoot
-                    self.en_bullets.append(pc.Bullet(self.bullet_sprites, self, self.x, self.y))
+                    self.en_bullets.append(pc.Bullet(self.bullet_sprites, self, self.x, self.y, self.dmg_give))
                     self.timer = 0
 
-        self.x += (self.move_speed * self.direction)
+        self.x += (self.move_speed * self.directions[0])
+        self.y += (self.move_speed * self.directions[1])
 
         # calculate the current frame
         if self.directions[0] == -1:
-            self.current_frame = 1
-        elif self.directions[0] == 1:
             self.current_frame = 2
+        elif self.directions[0] == 1:
+            self.current_frame = 1
+        elif self.directions[0] == 0:
+            self.current_frame = 0
 
         self.boss_bar_handler()
         self.bullet_collision_handler(bullet_list)
@@ -539,11 +617,11 @@ class FinalBoss(Boss):  # SHIP BOSS
 
     def bullet_collision_handler(self, bullet_list):
         for bullet in bullet_list:
-            if (self.x - 100 <= bullet.x <= self.x + 100) and (self.y - 100 <= bullet.y <= self.y + 100):
+            if (self.x - 50 <= bullet.x <= self.x + boss_image_size-50) and (self.y - 50 <= bullet.y <= self.y + boss_image_size/2):
                 self.hit_sfx.play()
                 bullet.hit = True
                 self.was_hit = True
-                self.helth -= 1
+                self.helth -= bullet.dmg_give
                 self.hit_by_player_num = bullet.owner.player_num
                 if self.current_hit_sfx < len(enemy_hit_sfxs) - 1:
                     self.current_hit_sfx += 1

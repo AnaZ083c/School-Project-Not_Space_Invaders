@@ -6,6 +6,7 @@ from constants_and_globals import *
 from Stars_classes import Star
 from functions import *
 from Label import Label
+from Pickup import Pickup
 
 import random
 import pygame
@@ -89,9 +90,10 @@ player1_animation = Animation(player1_sprites, 500)
 bullet_animation = Animation(bullet_sprites, 80)
 
 octoboss_animation = Animation(octopus_boss, 300)
+fuel_fire_animation = Animation(fuel_fire, 100)
+boom_animation = Animation(explosion_sprites, 200)
 
-player1 = Player(helth_sprite, player1_sprites, image_size, HEIGHT-image_size, bullet_sprites, joysticks, 1)
-player2 = Player(helth_sprite, player2_sprites, image_size+image_size, HEIGHT-image_size, bullet_sprites, joysticks, 2)
+rotated_bullet = pygame.transform.rotate(bullet_sprites, 180)
 
 player2.set_controls({
     "up": pygame.K_w,
@@ -101,9 +103,6 @@ player2.set_controls({
     "fire": pygame.K_k
 })
 
-enemies = read_enemies("test0_0.ens", enemies_list, en_bullet_sprites, 150, 80)
-print(enemies)
-
 # font = pygame.font.SysFont("Not_space_invaders_font", 40)
 p1_title_label = Label('Player 1', helth_img_size - 40, 15, TITANIUM_HWHITE, 40, FONT)
 p2_title_label = Label('Player 2', WIDTH - helth_img_size - 110, 15, TITANIUM_HWHITE, 40, FONT)
@@ -111,6 +110,8 @@ p2_title_label = Label('Player 2', WIDTH - helth_img_size - 110, 15, TITANIUM_HW
 p1_points_label = Label(str(player1.points), helth_img_size, 80, TITANIUM_HWHITE, 40, FONT, 'topleft', (helth_img_size, 80))
 p2_points_label = Label("{p2}".format(p2=player2.points), WIDTH - helth_img_size, 80, TITANIUM_HWHITE, 40, FONT, 'topright', (WIDTH - helth_img_size, 80))
 
+
+pickup = Pickup(green_pickup)
 
 stars = []
 fall_speed = 15
@@ -141,7 +142,6 @@ while window.running:
     keys = pygame.key.get_pressed()  # checking pressed keys
 
 
-
     """"""""""""""""""""""""""""""""""""""" draw/render """""""""""""""""""""""""""""""""""""""
     window.screen.fill(BLACK)
     for star in stars:
@@ -150,7 +150,7 @@ while window.running:
         star.check_if_i_should_reappear_on_top()
 
     # show frame image
-    window.screen.blit(boss_bar.frames[5], (BOSS_IMAGE_SCALE + WIDTH/2.25, BOSS_IMAGE_SCALE))
+    window.screen.blit(rotated_bullet, (WIDTH/2, HEIGHT/2))
 
     """""""""""""""""""""""""""""""""""""""" flip display """""""""""""""""""""""""""""""""""""""""
     pygame.display.flip()  # always after drawing everything!!

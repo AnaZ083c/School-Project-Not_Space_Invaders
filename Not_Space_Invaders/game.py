@@ -28,21 +28,28 @@ sprite_sheet = SpriteSheet(SPRITE_SHEET)
 player1_sprites = Sprite(sprite_sheet)
 player2_sprites = Sprite(sprite_sheet, 3, (0, FRAME_OFFSET), True)
 fuel_fire = Sprite(sprite_sheet, 3, (4, 0), False)
-dash = Sprite(sprite_sheet, 2, (1, FRAME_OFFSET * 5), False)
+dash_left_right = Sprite(sprite_sheet, 2, (1, FRAME_OFFSET * 5), False)
+dash_up_down = Sprite(sprite_sheet, 2, (9, 0), False)
 
 explosion_sprites = Sprite(sprite_sheet, 3, (5, FRAME_OFFSET), False)
 
 # bullet sprites
 bullet_sprites = Sprite(sprite_sheet, 3, (3, FRAME_OFFSET * 4), False)
+player_blue_bullet = Sprite(sprite_sheet, 2, (6, 5 * FRAME_OFFSET), False)
+player_green_bullet = Sprite(sprite_sheet, 3, (8, 4 * FRAME_OFFSET), False)
+player_purple_bullet = Sprite(sprite_sheet, 3, (5, 4 * FRAME_OFFSET), False)
+player_yellow_bullet = Sprite(sprite_sheet, 3, (9, 2 * FRAME_OFFSET), False)
+
 en_bullet_sprites = Sprite(sprite_sheet, 3, (4, FRAME_OFFSET * 4), False)
-purple_bullet = Sprite(sprite_sheet, 3, (5, 4 * FRAME_OFFSET), False)
-blue_bullet = Sprite(sprite_sheet, 2, (6, 5 * FRAME_OFFSET), False)
-yellow_bullet = Sprite(sprite_sheet, 3, (7, 4 * FRAME_OFFSET), False)
+enemy_blue_bullet = Sprite(sprite_sheet, 2, (9, FRAME_OFFSET * 5), False)
+enemy_purple_bullet = Sprite(sprite_sheet, 3, (8, FRAME_OFFSET), False)
+enemy_yellow_bullet = Sprite(sprite_sheet, 3, (7, 4 * FRAME_OFFSET), False)
 
 player_boss_sprites = Sprite(sprite_sheet, 3, (3, 0), False)  # a special boss
 
 # pickup sprites
 heal_pickup = Sprite(sprite_sheet, 1, (6, 0))
+red_pickup = Sprite(sprite_sheet, 1, (8, 0))
 yellow_pickup = Sprite(sprite_sheet, 1, (6, FRAME_OFFSET))
 green_pickup = Sprite(sprite_sheet, 1, (6, 2 * FRAME_OFFSET))
 blue_pickup = Sprite(sprite_sheet, 1, (6, 3 * FRAME_OFFSET))
@@ -62,7 +69,7 @@ eye_boss = Sprite(sprite_sheet, 5, (0, FRAME_OFFSET * 3), False, BOSS_IMAGE_SCAL
 octopus_boss = Sprite(sprite_sheet, 2, (1, FRAME_OFFSET * 3), False, BOSS_IMAGE_SCALE)
 robot_boss = Sprite(sprite_sheet, 4, (2, FRAME_OFFSET * 3), False, BOSS_IMAGE_SCALE)
 boss_bar = Sprite(sprite_sheet, 6, (1, FRAME_OFFSET * 7), True, BOSS_IMAGE_SCALE)
-
+boos_explosion = Sprite(sprite_sheet, 3, (5, FRAME_OFFSET), False, BOSS_IMAGE_SCALE)
 
 # health sprites
 helth_sprite = Sprite(sprite_sheet, 1, (2, FRAME_OFFSET * 2), True, 0.2)
@@ -95,12 +102,19 @@ sprites = {
     "fourth-boss": eye_boss,
     "final-boss": player_boss_sprites,
     "fuel-fire": fuel_fire,
-    "dash": dash,
+    "dash-left-right": dash_left_right,
+    "dash-up-down": dash_up_down,
     "explosion": explosion_sprites,
-    "purple-bullet": purple_bullet,
-    "blue-bullet": blue_bullet,
-    "yellow-bullet": yellow_bullet,
+    "boss-explosion": boos_explosion,
+    "player-purple-bullet": player_purple_bullet,
+    "player-blue-bullet": player_blue_bullet,
+    "player-yellow-bullet": player_yellow_bullet,
+    "player-green-bullet": player_green_bullet,
+    "enemy-purple-bullet": enemy_purple_bullet,
+    "enemy-blue-bullet": enemy_blue_bullet,
+    "enemy-yellow-bullet": enemy_yellow_bullet,
     "heal-pickup": heal_pickup,
+    "red-pickup": red_pickup,
     "yellow-pickup": yellow_pickup,
     "green-pickup": green_pickup,
     "blue-pickup": blue_pickup,

@@ -59,6 +59,11 @@ class Sprite:
     def set_scale(self, new_scale):
         self.scale = new_scale
 
+    def rotate(self, angle: float):
+        rotated_sprite_sheet = pygame.transform.rotate(self.sprite_sheet, angle)
+
+
+
 
 """
     Class for handling and generation animations
@@ -72,8 +77,9 @@ class Animation:
         self.sprite = sprite
         self.start_frame = 0
         self.end_frame = len(sprite.frames)
+        self.stopped = False
 
-    def animate(self, window: Window, x, y, loop: bool = True):
+    def animate(self, window: Window, x, y, loop: bool = True, keep_on_after_animation: bool = True):
         current_time = pygame.time.get_ticks()
         if current_time - self.last_update >= self.animation_cooldown:  # if 500 ms have passed, move on to the next frame
             self.start_frame += 1
@@ -82,9 +88,11 @@ class Animation:
                 self.start_frame = 0
             elif not loop and self.start_frame >= len(self.sprite.frames):
                 self.start_frame = len(self.sprite.frames) - 1
+                self.stopped = True
 
         # show frame image
-        window.screen.blit(self.sprite.frames[self.start_frame], (x, y))
+        if not self.stopped:
+            window.screen.blit(self.sprite.frames[self.start_frame], (x, y))
 
     def set_start_end_frame(self, new_start, new_end):
         self.start_frame = new_start

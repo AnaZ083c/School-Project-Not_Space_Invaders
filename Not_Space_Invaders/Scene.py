@@ -6,6 +6,7 @@ from Stars_classes import Star
 from functions import *
 from InputBox import InputBox
 from Label import Label
+from Pickup import *
 
 import re
 import random
@@ -928,6 +929,7 @@ class ControllerInit(Scene):
 
 current_boss = 0
 
+
 """""""""""""""""""""""""""
     SINGLEPLAYER GAME SCENE
 """""""""""""""""""""""""""
@@ -942,22 +944,44 @@ class Singleplayer(Scene):
         self.death_img_size = FRAME_OFFSET * self.sprites["death"].scale
         self.win_img_size = FRAME_OFFSET * self.sprites["win"].scale
 
-        self.player1 = Player(self.sprites["heart"], self.sprites["player1"],
-                              image_size, HEIGHT-image_size, self.sprites["player_bullet"],
-                              1, list(joysticks), player1_joyid)
+        self.boom_animation = Animation(self.sprites["explosion"], 200)
+
+        self.enemy_bullets = [
+            self.sprites["enemy_bullet"],
+            self.sprites["enemy-purple-bullet"],
+            self.sprites["enemy-blue-bullet"],
+            self.sprites["enemy-yellow-bullet"]
+        ]
+
+        self.player_bullets = [
+            self.sprites["player-purple-bullet"],
+            self.sprites["player-blue-bullet"],
+            self.sprites["player-yellow-bullet"],
+            self.sprites["player-green-bullet"],
+            self.sprites["player_bullet"]
+        ]
 
         global player1_name
         self.p1_title_label = Label(player1_name, self.heart_img_size - 40, 15, PLAYER1_COLOR, 40, FONT)
-        self.p1_points_label = Label(str(self.player1.points), self.heart_img_size, 80, TITANIUM_HWHITE, 40, FONT, 'topleft',
+        self.p1_points_label = Label(str(0), self.heart_img_size, 80, TITANIUM_HWHITE, 40, FONT,
+                                     'topleft',
                                      (self.heart_img_size, 80))
 
-        self.enemies = read_enemies(lvl_file, self.sprites["enemies"], self.sprites["enemy_bullet"], 150, 80)
+        self.player1 = Player(self.p1_points_label, self.sprites["dash-left-right"], self.sprites["dash-up-down"], self.sprites["explosion"], self.sprites["fuel-fire"], self.sprites["heart"], self.sprites["player1"],
+                              image_size, HEIGHT-image_size, self.sprites["player_bullet"],
+                              1, list(joysticks), player1_joyid)
+
+
+
+        self.enemies = read_enemies(lvl_file, self.sprites["enemies"], self.sprites["explosion"], self.enemy_bullets, 150, 80)
         self.pressed_keys = None
 
         self.enemy_explode_sfx = pygame.mixer.Sound(ENEMY_EXPLODE)
         self.hidden = 0
 
         self.killed_hidden = []  # [None] * len(self.enemies)
+        self.killed_animations = []
+        self.boss_killed_animation = []
         self.timer_level = 0
         self.last_update = pygame.time.get_ticks()
         self.timer = 0
@@ -969,14 +993,29 @@ class Singleplayer(Scene):
         self.enemies_num = len(self.enemies)
 
         self.bosses = [
-            FirstBoss(self.sprites["boss-bar"], self.sprites["first-boss"], WIDTH / 2, HEIGHT / 4, self.sprites["enemy_bullet"], 100.0),
-            SecondBoss(self.sprites["boss-bar"], self.sprites["second-boss"], WIDTH / 2, HEIGHT / 4, self.sprites["enemy_bullet"], 100.0),
-            ThirdBoss(self.sprites["boss-bar"], self.sprites["third-boss"], WIDTH / 2, HEIGHT / 4, self.sprites["enemy_bullet"], 100.0),
-            FourthBoss(self.sprites["boss-bar"], self.sprites["fourth-boss"], WIDTH / 2, HEIGHT / 4, self.sprites["enemy_bullet"], 100.0),
-            FinalBoss(self.sprites["boss-bar"], self.sprites["final-boss"], WIDTH / 2, HEIGHT / 4, self.sprites["enemy_bullet"], 100.0)
+            FirstBoss(self.sprites["explosion"], self.sprites["boss-bar"], self.sprites["first-boss"], WIDTH / 2, HEIGHT / 4, self.enemy_bullets[0], 100.0),
+            SecondBoss(self.sprites["explosion"], self.sprites["boss-bar"], self.sprites["second-boss"], WIDTH / 2, HEIGHT / 4, self.enemy_bullets[1], 100.0),
+            ThirdBoss(self.sprites["explosion"], self.sprites["boss-bar"], self.sprites["third-boss"], WIDTH / 2, HEIGHT / 4, self.enemy_bullets[2], 100.0),
+            FourthBoss(self.sprites["explosion"], self.sprites["boss-bar"], self.sprites["fourth-boss"], WIDTH / 2, HEIGHT / 4, self.enemy_bullets[3], 100.0),
+            FinalBoss(self.sprites["explosion"], self.sprites["boss-bar"], self.sprites["final-boss"], WIDTH / 2, HEIGHT / 4, self.enemy_bullets[1], 100.0),
         ]
+
+        self.pickups = [
+            Pickup(self.sprites["green-pickup"], 5.0, 1.5, 0, "green", self.player_bullets[3], 2),
+            Pickup(self.sprites["purple-pickup"], 3.0, 2.0, 0, "purple", self.player_bullets[0], 3),
+            Pickup(self.sprites["blue-pickup"], 10.0, 3.0, 0, "blue", self.player_bullets[1], 4),
+            Pickup(self.sprites["yellow-pickup"], 8.0, 2.5, 0, "yellow", self.player_bullets[2], 5)
+        ]
+
+        self.constant_pickups = [
+            Pickup(self.sprites["red-pickup"], 8.0, 2.5, 0, "red", self.player_bullets[4], 1),
+            Pickup(self.sprites["heal-pickup"], 9.0, 3.5, 3, "heal", None)
+        ]
+
         self.boss_time = False
         self.show_boss_label = False
+        self.show_last_boss_bar = False
+        self.killed_boss = False
 
     def process_input(self, events, pressed_keys):
         global current_boss
@@ -1001,8 +1040,11 @@ class Singleplayer(Scene):
                         self.show_boss_label = False
 
                     else:
-                        self.enemies = read_enemies(lvl_file, self.sprites["enemies"], self.sprites["enemy_bullet"], 150, 80)
+                        self.enemies = read_enemies(lvl_file, self.sprites["enemies"], self.sprites["explosion"], self.enemy_bullets, 150, 80)
+                        self.show_last_boss_bar = False
                         self.killed_hidden = []
+                        self.killed_animations = []
+                        self.boss_killed_animation = []
                         self.enemies_num = len(self.enemies)
                         print("NEXT LEVEL !!")
                         self.timer = 0
@@ -1015,8 +1057,8 @@ class Singleplayer(Scene):
         if not self.show_boss_label and self.boss_time:
             en_bullets += self.bosses[current_boss].en_bullets
 
-        self.player1.update(self.pressed_keys, en_bullets)
-        self.p1_points_label.update(str(self.player1.points), TITANIUM_HWHITE)
+        self.player1.update(self.pressed_keys, en_bullets, self.pickups + self.constant_pickups)
+        # self.p1_points_label.update(str(self.player1.points), TITANIUM_HWHITE)
 
         # boss update
         if not self.show_boss_label and self.boss_time:
@@ -1025,12 +1067,26 @@ class Singleplayer(Scene):
         if self.bosses[current_boss].helth <= 0:
             # self.bosses[0].defeated = True
             self.last_update = pygame.time.get_ticks()
+            self.boss_killed_animation.append([Animation(self.sprites["boss-explosion"], 250),
+                                               self.bosses[current_boss].x, self.bosses[current_boss].y])
+            self.enemy_explode_sfx.play()
             self.bosses[current_boss] = True
             current_boss += 1
             self.boss_time = False
+            self.show_last_boss_bar = True
+
+            self.player1.killed_boss = True
+
             self.switch_level = True
             update_wave()
             self.new_set_label.update("LEVEL " + str(level) + ": Wave " + str(wave) + " of 3", (255, 255, 0))
+
+        # pickup update
+        for count in range(level):
+            self.pickups[count].update()
+
+        for const_pickup in self.constant_pickups:
+            const_pickup.update()
 
         # enemy update
         for enemy in self.enemies:
@@ -1042,6 +1098,7 @@ class Singleplayer(Scene):
                 self.enemy_explode_sfx.play()
                 tmp = enemy
                 self.killed_hidden.append(True)
+                self.killed_animations.append([Animation(self.sprites["explosion"], 200), enemy.x, enemy.y])
                 print(self.killed_hidden)
                 self.enemies.remove(enemy)
                 if tmp.hit_by_player_num == 1:
@@ -1051,12 +1108,23 @@ class Singleplayer(Scene):
         window.screen.fill(BLACK)
         animate_stars(window)
 
+        for count in range(level):
+            self.pickups[count].show(window)
+
+        for const_pickup in self.constant_pickups:
+            const_pickup.show(window)
+
         self.player1.show(window)
 
         global current_boss
 
         if not self.show_boss_label and self.boss_time and self.bosses[current_boss].helth > 0:
             self.bosses[current_boss].show(window)
+        for boss_killed_an, an_x, an_y in self.boss_killed_animation:
+            boss_killed_an.animate(window, an_x, an_y, False, False)
+            if self.show_last_boss_bar:
+                window.screen.blit(self.sprites["boss-bar"].frames[5], (BOSS_IMAGE_SCALE + WIDTH / 2.25, BOSS_IMAGE_SCALE))
+
 
         for enemy in self.enemies:
             if enemy.y + image_size < HEIGHT:
@@ -1065,6 +1133,9 @@ class Singleplayer(Scene):
                 if len(self.killed_hidden) <= self.enemies_num:
                     self.killed_hidden.append(False)
                     # print(self.killed_hidden)
+
+        for killed_animation, an_x, an_y in self.killed_animations:
+            killed_animation.animate(window, an_x, an_y, False, False)
 
         if len(self.enemies) != 0 and self.player1.health <= 0:
             self.sprites["death"].show_frames(window, (WIDTH / 2 - (self.death_img_size / 2), HEIGHT / 2 - (self.death_img_size / 2)))
@@ -1087,7 +1158,7 @@ class Singleplayer(Scene):
 
         # Player 1 GUI
         self.p1_title_label.show(window)
-        self.p1_points_label.show(window)
+        # self.p1_points_label.show(window)
 
         if self.switch_level and not self.boss_time:
             self.new_set_label.show(window)
