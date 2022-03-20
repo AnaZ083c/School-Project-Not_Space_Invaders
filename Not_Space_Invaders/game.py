@@ -24,6 +24,8 @@ window.init_window()
 enemies_list = []
 
 sprite_sheet = SpriteSheet(SPRITE_SHEET)
+icon = pygame.image.load(ICON)
+pygame.display.set_icon(icon)
 
 # player sprites
 player1_sprites = Sprite(sprite_sheet)
