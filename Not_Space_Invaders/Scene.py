@@ -266,7 +266,8 @@ player1_controls_controller = {
     "left": [pygame.K_LEFT, "L pad"],
     "right": [pygame.K_RIGHT, "L pad"],
     "fire": [pygame.K_KP_ENTER, "A"],
-    "dash": [pygame.K_KP3, "RB"]
+    "dash": [pygame.K_KP3, "RB"],
+    "pause": [pygame.K_F10, ""]
 }
 
 player2_controls_controller = {
@@ -275,7 +276,8 @@ player2_controls_controller = {
     "left": [pygame.K_a, "L pad"],
     "right": [pygame.K_d, "L pad"],
     "fire": [pygame.K_k, "A"],
-    "dash": [pygame.K_SPACE, "RB"]
+    "dash": [pygame.K_SPACE, "RB"],
+    "pause": [pygame.K_F10, ""]
 }
 
 player2_controls = {
@@ -1452,11 +1454,10 @@ class Singleplayer(Scene):
         if len(self.enemies) != 0 and self.player1.health <= 0:
             # self.sprites["death"].show_frames(window, (WIDTH / 2 - (self.death_img_size / 2), HEIGHT / 2 - (self.death_img_size / 2)))
             self.game_over = True
-        if type(self.bosses[len(self.bosses) - 1] == bool and self.bosses[len(self.bosses) - 1]):
-            if get_points_percent(self.max_points, self.player1.points) >= 70:
-                self.win = True
-            else:
-                self.game_over = True
+        if (type(self.bosses[len(self.bosses) - 1]) == bool and self.bosses[len(self.bosses) - 1]) and get_points_percent(self.max_points, self.player1.points) >= 70:
+            self.win = True
+        elif (type(self.bosses[len(self.bosses) - 1]) == bool and self.bosses[len(self.bosses) - 1]) and get_points_percent(self.max_points, self.player1.points) < 70:
+            self.game_over = True
         if len(self.killed_hidden) >= self.enemies_num:
             if not self.switch_level:
                 self.last_update = pygame.time.get_ticks()
@@ -1734,11 +1735,11 @@ class Multiplayer(Scene):
         if len(self.enemies) != 0 and self.player1.health <= 0 and self.player2.health <= 0:
             # self.sprites["death"].show_frames(window, (WIDTH / 2 - (self.death_img_size / 2), HEIGHT / 2 - (self.death_img_size / 2)))
             self.game_over = True
-        if type(self.bosses[len(self.bosses) - 1] == bool and self.bosses[len(self.bosses) - 1]):
-            if get_points_percent(self.max_points, self.player1.points + self.player2.points) >= 70:
-                self.win = True
-            else:
-                self.game_over = True
+        if (type(self.bosses[len(self.bosses) - 1]) == bool and self.bosses[len(self.bosses) - 1]) and (get_points_percent(self.max_points, self.player1.points + self.player2.points) >= 70):
+            self.win = True
+        elif (type(self.bosses[len(self.bosses) - 1]) == bool and self.bosses[len(self.bosses) - 1]) and (get_points_percent(self.max_points, self.player1.points + self.player2.points) < 70):
+            self.game_over = True
+
         if len(self.killed_hidden) >= self.enemies_num:
             if not self.switch_level:
                 self.last_update = pygame.time.get_ticks()

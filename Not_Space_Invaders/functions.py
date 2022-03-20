@@ -66,7 +66,7 @@ def save_points(pts_path, players: list):
     pts_file = open(pts_path, "a")
     for player, player_name in players:
         # print(f"{str(player_name)} {player.points}")
-        pts_file.write(f"{str(player_name).ljust(7)} ..... {player.points}\n")
+        pts_file.write(f"{str(player_name)} ..... {player.points}\n")
 
     pts_file.close()
 
