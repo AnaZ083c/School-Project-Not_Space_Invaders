@@ -61,3 +61,42 @@ def read_enemies(infilename: str, enemy_ids: list, boom: Sprite, bullets: list, 
                 enemies_list.append(enemy_sprite)
 
     return enemies_list
+
+def save_points(pts_path, players: list):
+    pts_file = open(pts_path, "a")
+    for player, player_name in players:
+        # print(f"{str(player_name)} {player.points}")
+        pts_file.write(f"{str(player_name).ljust(7)} ..... {player.points}\n")
+
+    pts_file.close()
+
+def create_random_levels():
+    max_points = 0
+    for lvl in range(1, 6):
+        for wv in range(1, 4):
+            file = open(LEVELS+"level"+str(lvl)+"_"+str(wv)+".ens", "w")
+
+            for i in range(4):
+                for j in range(12):
+                    enemy_id = random.randint(0, 3)
+                    if lvl == 1:
+                        enemy_id = random.randint(0, 1)
+                    elif lvl == 2:
+                        enemy_id = random.randint(0, 2)
+                    elif lvl >= 3:
+                        enemy_id = random.randint(0, 3)
+                    if enemy_id == 1:
+                        max_points += 3
+                    elif enemy_id == 2:
+                        max_points += 5
+                    elif enemy_id == 3:
+                        max_points += 7
+                    file.write(str(enemy_id)+" ")
+                file.write("\n")
+
+            file.close()
+    return max_points
+
+def get_points_percent(max_points, current_points):
+    return (current_points * 100) / max_points
+

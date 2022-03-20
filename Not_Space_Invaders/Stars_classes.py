@@ -14,6 +14,9 @@ class Star(object):
         self.fall_speed = fall_speed
         self.rect = pygame.Rect(self.x, self.y, 1, 20)
 
+    def draw_static(self, window: Window):
+        pygame.draw.rect(window.screen, self.color, pygame.Rect(self.x, self.y, 1, 1))
+
     def draw(self, window: Window):
         # pygame.draw.circle(window.screen, self.color, (self.x, self.y), self.radius)
         pygame.draw.rect(window.screen, self.color, pygame.Rect(self.x, self.y, self.width, self.height))

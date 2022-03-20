@@ -52,7 +52,8 @@ class Player:
                                   "down": pygame.K_DOWN,
                                   "left": pygame.K_LEFT,
                                   "right": pygame.K_RIGHT,
-                                  "fire": pygame.K_KP_ENTER}
+                                  "fire": pygame.K_KP_ENTER,
+                                  "dash": pygame.K_KP3}
         self.joystick_index = joystick_index
         self.joysticks = joysticks
         self.motion = [0, 0]
@@ -157,13 +158,13 @@ class Player:
                     self.x += self.motion[0] * self.move_speed
                     self.y += self.motion[1] * self.move_speed
 
-                    if self.speedup:
-                        self.move_speed *= 20
-                        self.draw_speedup = True
-                        self.last_speedup = pygame.time.get_ticks()
-                        self.speedup = False
-                    else:
-                        self.move_speed = self.original_speed
+            if self.speedup:
+                self.move_speed *= 20
+                self.draw_speedup = True
+                self.last_speedup = pygame.time.get_ticks()
+                self.speedup = False
+            else:
+                self.move_speed = self.original_speed
             self.out_of_bounds_handler()
             self.pickup_collision_handler(pickup_list)
             self.boss_reward_handler()
@@ -174,9 +175,16 @@ class Player:
         if self.killed_boss:
             self.update_health(2)
             self.killed_boss = False
-
             self.__init__(self.points_label, self.dash_left_right, self.dash_up_down, self.boom_sprite, self.fuel_fire_sprite, self.player_hearts, self.player_sprites, self.x, self.y, self.bullet_sprites, self.player_num, self.joysticks, self.joystick_index, self.max_health)
-
+            if self.player_num == 2:
+                self.set_controls({
+                    "up": pygame.K_w,
+                    "down": pygame.K_s,
+                    "left": pygame.K_a,
+                    "right": pygame.K_d,
+                    "fire": pygame.K_k,
+                    "dash": pygame.K_SPACE
+                })
 
     def event_handler(self, event: pygame.event):
         # print(self.shooting)
@@ -209,6 +217,8 @@ class Player:
         #     else:
         #         self.bullet_cooldown -= 1
         if event.type == pygame.KEYDOWN:
+            if event.key == self.keyboard_controls.get("dash"):
+                self.speedup = True
             if event.key == self.keyboard_controls.get("fire"):
                 self.sfx.play()
                 self.bullets.append(Bullet(self.bullet_sprites, self, self.x, self.y, self.bullet_dmg_give))
@@ -307,9 +317,9 @@ class Player:
 
     def get_hearts_xys(self):
         hearts_img_size = FRAME_OFFSET * self.player_hearts.scale  # 28.8
-        print("HEARTS_IMG_SIZE", hearts_img_size)
-        print("HEALTH: ", self.health)
-        print("MAX HEALTH: ", self.health)
+        # print("HEARTS_IMG_SIZE", hearts_img_size)
+        # print("HEALTH: ", self.health)
+        # print("MAX HEALTH: ", self.health)
         heart_y = 40
         heart_x = 0
         heart_count = 0
@@ -323,14 +333,13 @@ class Player:
                 heart_x += 1
                 heart_count += 1
             elif self.player_num == 2:
-                if self.player_num == 1:
-                    if heart_count == 5:
-                        heart_y += 40
-                        heart_x = 0
-                        heart_count = 0
-                    self.hearts_xys.append((WIDTH - (heart_x * hearts_img_size) - 50, heart_y))
-                    heart_x += 1
-                    heart_count += 1
+                if heart_count == 5:
+                    heart_y += 40
+                    heart_x = 0
+                    heart_count = 0
+                self.hearts_xys.append((WIDTH - (heart_x * hearts_img_size) - 50, heart_y))
+                heart_x += 1
+                heart_count += 1
         self.last_heart_y = heart_y
         self.points_label.change_y(heart_y + hearts_img_size)
 

@@ -79,8 +79,10 @@ class Animation:
         self.end_frame = len(sprite.frames)
         self.stopped = False
 
-    def animate(self, window: Window, x, y, loop: bool = True, keep_on_after_animation: bool = True):
+    def animate(self, window: Window, x, y, loop: bool = True, keep_on_after_animation: bool = True, sfx = None):
         current_time = pygame.time.get_ticks()
+        if sfx is not None:
+            sfx.play()
         if current_time - self.last_update >= self.animation_cooldown:  # if 500 ms have passed, move on to the next frame
             self.start_frame += 1
             self.last_update = current_time

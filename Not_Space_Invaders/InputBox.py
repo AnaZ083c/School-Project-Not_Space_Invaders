@@ -9,7 +9,7 @@ class InputBox:
         self.y = y
         self.w = w
         self.h = h
-        self.rect = pg.Rect(self.x, self.y, self.w, self. h)
+        self.rect = pg.Rect(self.x, self.y, self.w, self.h)
         self.placeholder = placeholder
 
         # self.rect.center = (self.x, self.y)

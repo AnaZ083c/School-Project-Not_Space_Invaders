@@ -8,6 +8,8 @@ BLACK_RED = (115, 100, 100)
 BLACKER_RED = (78, 12, 12)
 (WIDTH, HEIGHT) = (1920, 1080)  # (1280, 1000)  # 1000, 900
 SPRITE_SHEET = 'assets/sprite-sheet07-transparent.png'
+PLANET = 'assets/end.png'
+
 PLAYER_RED_BULLET_SFX = 'assets/player_redBullet_shoot.mp3'
 GENERIC_ENEMY_BULLET_SFX = 'assets/generic_enemy_shoot.mp3'
 ENEMY_HIT_1 = 'assets/sfx/enemy-hit-1.wav'
@@ -28,6 +30,7 @@ THEME = 'assets/not_theme.mp3'
 FONT = 'assets/fonts/Not_space_invaders_font-Regular.otf'
 
 LEVELS = 'assets/levels/'
+POINTS = 'assets/points/points.pts'
 
 
 PLAYER1_COLOR = (17, 255, 0)

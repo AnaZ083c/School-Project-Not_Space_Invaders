@@ -30,6 +30,7 @@ enemies_list = []
 
 sprite_sheet = SpriteSheet(SPRITE_SHEET)
 
+
 # player sprites
 player1_sprites = Sprite(sprite_sheet)
 player2_sprites = Sprite(sprite_sheet, 3, (0, FRAME_OFFSET), True)
@@ -93,25 +94,8 @@ octoboss_animation = Animation(octopus_boss, 300)
 fuel_fire_animation = Animation(fuel_fire, 100)
 boom_animation = Animation(explosion_sprites, 200)
 
-rotated_bullet = pygame.transform.rotate(bullet_sprites, 180)
-
-player2.set_controls({
-    "up": pygame.K_w,
-    "down": pygame.K_s,
-    "left": pygame.K_a,
-    "right": pygame.K_d,
-    "fire": pygame.K_k
-})
-
-# font = pygame.font.SysFont("Not_space_invaders_font", 40)
-p1_title_label = Label('Player 1', helth_img_size - 40, 15, TITANIUM_HWHITE, 40, FONT)
-p2_title_label = Label('Player 2', WIDTH - helth_img_size - 110, 15, TITANIUM_HWHITE, 40, FONT)
-
-p1_points_label = Label(str(player1.points), helth_img_size, 80, TITANIUM_HWHITE, 40, FONT, 'topleft', (helth_img_size, 80))
-p2_points_label = Label("{p2}".format(p2=player2.points), WIDTH - helth_img_size, 80, TITANIUM_HWHITE, 40, FONT, 'topright', (WIDTH - helth_img_size, 80))
-
-
 pickup = Pickup(green_pickup)
+planet = pygame.image.load(PLANET)
 
 stars = []
 fall_speed = 15
@@ -150,7 +134,7 @@ while window.running:
         star.check_if_i_should_reappear_on_top()
 
     # show frame image
-    window.screen.blit(rotated_bullet, (WIDTH/2, HEIGHT/2))
+    window.screen.blit(planet, (0, 0))
 
     """""""""""""""""""""""""""""""""""""""" flip display """""""""""""""""""""""""""""""""""""""""
     pygame.display.flip()  # always after drawing everything!!

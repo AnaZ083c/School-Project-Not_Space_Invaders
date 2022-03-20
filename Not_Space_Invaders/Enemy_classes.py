@@ -123,7 +123,7 @@ class Enemy:
                 bullet.hit = True
                 self.was_hit = True
                 self.helth -= bullet.dmg_give
-                print("bullet dmg = ", bullet.dmg_give)
+                # print("bullet dmg = ", bullet.dmg_give)
                 self.hit_by_player_num = bullet.owner.player_num
                 if self.current_hit_sfx < len(enemy_hit_sfxs) - 1:
                     self.current_hit_sfx += 1
@@ -187,6 +187,7 @@ class FirstBoss(Boss):  # ANGRY ALIEN BOSS
         self.max_helth = 50
         self.step = self.max_helth // len(boss_bar.frames)
         self.boss_bar_frame = 0
+        self.defeated = False
 
     def boss_bar_handler(self):
         if self.get_health_percent() == 100:
@@ -275,6 +276,7 @@ class SecondBoss(Boss):  # OCTOPUS BOSS
         self.direction_x = 1  # 0, 1, -1
         self.direction_y = 0  # 0, 1, -1
         self.directions = [1, 0]  # x, y
+        self.defeated = False
 
     def boss_bar_handler(self):
         if self.get_health_percent() == 100:
@@ -368,6 +370,7 @@ class ThirdBoss(Boss):  # ROBOT BOSS
         self.break_step = self.helth // 3
 
         self.current_frame = 0
+        self.defeated = False
 
     def boss_bar_handler(self):
         if self.get_health_percent() == 100:
@@ -471,6 +474,7 @@ class FourthBoss(Boss):  # EYE BOSS
 
         self.current_frame = 0
         self.dir_index = 0
+        self.defeated = False
 
     def boss_bar_handler(self):
         if self.get_health_percent() == 100:
@@ -574,6 +578,7 @@ class FinalBoss(Boss):  # SHIP BOSS
         self.directions = [1, 0]  # x, y
         self.current_frame = 0
         self.move_speed = 4
+        self.defeated = False
 
     def boss_bar_handler(self):
         if self.get_health_percent() == 100:
@@ -696,7 +701,7 @@ class Enemies:
     def helth_check(self):
         for enemies in self.enemies_2d_array:
             for enemy in enemies:
-                print(enemy.helth)
+                # print(enemy.helth)
                 if enemy.helth <= 0:
                     enemies.remove(enemy)
 
