@@ -10,6 +10,7 @@ import constants_and_globals as cag
 
 import random
 import pygame
+import sys
 
 
 pygame.init()
@@ -203,5 +204,5 @@ def run_game(starting_scene):
 
 run_game(TitleScene(sprites))
 pygame.quit()
-exit(0)
+sys.exit(0)
 # quit()
