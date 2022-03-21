@@ -185,9 +185,9 @@ def run_game(starting_scene):
                 # if event.key == pygame.K_F1:  # toggle sound 0/1
                 #     toggle_sound_state(SETTINGS, int(not cag.sound_state))
                 #     # print(cag.sound_state)
-                if event.key == pygame.K_ESCAPE:
-                    quit_attempt = True
-                elif event.key == pygame.K_F4 and alt_pressed:
+                # if event.key == pygame.K_ESCAPE:
+                #     quit_attempt = True
+                if event.key == pygame.K_F4 and alt_pressed:
                     quit_attempt = True
 
             if quit_attempt:

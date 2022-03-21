@@ -10,9 +10,10 @@ import random
     0 -> no enemy
     1, 2, 3 ..., n -> enemy types
     1: generic enemy
+    2: octopus enemy
+    3: robot enemy
 
-    file naming: levelNUM.ens
-    boss file: levelNUM_B.ens
+    file naming: levelNUM_WAVE
 
     offset: spacing between enemies
 """
@@ -49,15 +50,15 @@ def read_enemies(infilename: str, enemy_ids: list, boom: Sprite, bullets: list, 
 
             elif ids[j][i] == '1':
                 shoot_cooldown = random.randrange(int(min_), int(max_), 5)
-                enemy_sprite = Enemy(boom, enemy_ids[0], curr_x_offset, curr_y_offset, bullets[0], shoot_cooldown, 6, 1, 6)
+                enemy_sprite = Enemy(boom, enemy_ids[0], curr_x_offset, curr_y_offset, bullets[0], shoot_cooldown, GENERIC_ENEMY_HP, 1, GENERIC_ENEMY_HP)
                 enemies_list.append(enemy_sprite)
             elif ids[j][i] == '2':
                 shoot_cooldown = random.randrange(int(min_), int(max_), 5)
-                enemy_sprite = Enemy(boom, enemy_ids[1], curr_x_offset, curr_y_offset, bullets[1], shoot_cooldown, 12, 2, 12)
+                enemy_sprite = Enemy(boom, enemy_ids[1], curr_x_offset, curr_y_offset, bullets[1], shoot_cooldown, OCTOPUS_ENEMY_HP, 2, OCTOPUS_ENEMY_HP)
                 enemies_list.append(enemy_sprite)
             elif ids[j][i] == '3':
                 shoot_cooldown = random.randrange(int(min_), int(max_), 5)
-                enemy_sprite = Enemy(boom, enemy_ids[2], curr_x_offset, curr_y_offset, bullets[2], shoot_cooldown, 18, 3, 18)
+                enemy_sprite = Enemy(boom, enemy_ids[2], curr_x_offset, curr_y_offset, bullets[2], shoot_cooldown, ROBOT_ENEMY_HP, 3, ROBOT_ENEMY_HP)
                 enemies_list.append(enemy_sprite)
 
     return enemies_list
@@ -86,11 +87,11 @@ def create_random_levels():
                     elif lvl >= 3:
                         enemy_id = random.randint(0, 3)
                     if enemy_id == 1:
-                        max_points += 6
+                        max_points += GENERIC_ENEMY_HP
                     elif enemy_id == 2:
-                        max_points += 12
+                        max_points += OCTOPUS_ENEMY_HP
                     elif enemy_id == 3:
-                        max_points += 18
+                        max_points += ROBOT_ENEMY_HP
                     file.write(str(enemy_id)+" ")
                 file.write("\n")
 

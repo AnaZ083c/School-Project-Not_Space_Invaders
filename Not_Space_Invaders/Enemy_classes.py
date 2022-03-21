@@ -36,7 +36,7 @@ class Enemy:
         self.en_bullet = pc.Bullet(bullet_sprites, self, self.en_bullet_x, self.en_bullet_y, self.dmg_give)
 
         self.move_speed = 2
-        self.bullet_speed = 2.5
+        self.bullet_speed = 5
         self.is_moving = False
 
         self.last_update = pygame.time.get_ticks()
@@ -181,10 +181,10 @@ class Boss(Enemy):
 
 
 class FirstBoss(Boss):  # ANGRY ALIEN BOSS
-    def __init__(self, boom, boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown=40.0, worth=1000, dmg_give=1, max_helth=100):
+    def __init__(self, boom, boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown=40.0, worth=1000, dmg_give=BOSS_1_DMG, max_helth=BOSS_1_HP):
         super(FirstBoss, self).__init__(boom, boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown, worth, dmg_give, max_helth)
-        self.helth = 100
-        self.max_helth = 100
+        self.helth = BOSS_1_HP
+        self.max_helth = BOSS_1_HP
         self.step = self.max_helth // len(boss_bar.frames)
         self.boss_bar_frame = 0
         self.defeated = False
@@ -259,11 +259,11 @@ class FirstBoss(Boss):  # ANGRY ALIEN BOSS
 
 
 class SecondBoss(Boss):  # OCTOPUS BOSS
-    def __init__(self, boom, boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown=40.0, worth=1000, dmg_give=2, max_helth=200):
+    def __init__(self, boom, boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown=40.0, worth=1000, dmg_give=BOSS_2_DMG, max_helth=BOSS_2_HP):
         super(SecondBoss, self).__init__(boom, boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown, worth, dmg_give, max_helth)
-        self.helth = 200
+        self.helth = BOSS_2_HP
         self.animation = Animation(boss_sprites, 300)
-        self.max_helth = 200
+        self.max_helth = BOSS_2_HP
         self.step = self.max_helth // len(boss_bar.frames)
         self.boss_bar_frame = 0
 
@@ -356,11 +356,11 @@ class SecondBoss(Boss):  # OCTOPUS BOSS
 
 
 class ThirdBoss(Boss):  # ROBOT BOSS
-    def __init__(self, boom, boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown=40.0, worth=1000, dmg_give=3, max_helth=300):
+    def __init__(self, boom, boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown=40.0, worth=1000, dmg_give=BOSS_3_DMG, max_helth=BOSS_3_HP):
         super(ThirdBoss, self).__init__(boom, boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown, worth, dmg_give, max_helth)
-        self.helth = 300
+        self.helth = BOSS_3_HP
         # self.animation = Animation(boss_sprites, 300)
-        self.max_helth = 300
+        self.max_helth = BOSS_3_HP
         self.step = self.max_helth // len(boss_bar.frames)
         self.boss_bar_frame = 0
 
@@ -393,7 +393,7 @@ class ThirdBoss(Boss):  # ROBOT BOSS
     def update(self, bullet_list):
         current_time = pygame.time.get_ticks()
         if self.y + boss_image_size < HEIGHT:
-            if current_time - self.last_update >= self.shoot_cooldown:  # if 500 ms have passed, move on to the next frame
+            if current_time - self.last_update >= self.shoot_cooldown:
                 self.timer += 1
                 self.last_update = current_time
                 if self.timer >= self.shoot_cooldown:
@@ -465,11 +465,11 @@ class ThirdBoss(Boss):  # ROBOT BOSS
 
 
 class FourthBoss(Boss):  # EYE BOSS
-    def __init__(self, boom, boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown=40.0, worth=1000, dmg_give=4, max_helth=200):
+    def __init__(self, boom, boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown=40.0, worth=1000, dmg_give=BOSS_4_DMG, max_helth=BOSS_4_HP):
         super(FourthBoss, self).__init__(boom, boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown, worth, dmg_give, max_helth)
-        self.helth = 200
+        self.helth = BOSS_4_HP
         # self.animation = Animation(boss_sprites, 300)
-        self.max_helth = 200
+        self.max_helth = BOSS_4_HP
         self.step = self.max_helth // len(boss_bar.frames)
         self.boss_bar_frame = 0
 
@@ -573,11 +573,11 @@ class FourthBoss(Boss):  # EYE BOSS
 
 
 class FinalBoss(Boss):  # SHIP BOSS
-    def __init__(self, boom, boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown=40.0, worth=5000, dmg_give=5, max_helth=250):
+    def __init__(self, boom, boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown=40.0, worth=5000, dmg_give=BOSS_5_DMG, max_helth=BOSS_5_HP):
         super(FinalBoss, self).__init__(boom, boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown, worth, dmg_give, max_helth)
-        self.helth = 250
+        self.helth = BOSS_5_HP
         # self.animation = Animation(boss_sprites, 300)
-        self.max_helth = 250
+        self.max_helth = BOSS_5_HP
         self.step = self.max_helth // len(boss_bar.frames)
         self.boss_bar_frame = 0
 

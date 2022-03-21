@@ -7,7 +7,7 @@ import pygame
 
 
 class Player:
-    def __init__(self, points_label: Label, dash_left_right: Sprite, dash_up_down: Sprite, boom: Sprite, fuel_fire: Sprite, player_hearts: Sprite, player_sprites: Sprite, x, y, bullet_sprites: Sprite, player_num: int = 1, joysticks: list = None, joystick_index: int = -1, health: int = 5):  # keyboard_controls = [ up, down, left, right ]
+    def __init__(self, points_label: Label, dash_left_right: Sprite, dash_up_down: Sprite, boom: Sprite, fuel_fire: Sprite, player_hearts: Sprite, player_sprites: Sprite, x, y, bullet_sprites: Sprite, player_num: int = 1, joysticks: list = None, joystick_index: int = -1, health: int = 5, points: int = 0):  # keyboard_controls = [ up, down, left, right ]
         self.player_sprites = player_sprites
         self.player_hearts = player_hearts
         self.dash_left_right = dash_left_right
@@ -41,7 +41,7 @@ class Player:
 
         self.bullets = []
         self.bullet_shot = True
-        self.points = 0
+        self.points = points
 
         self.frame = 0  # idle
         self.move_speed = 5
@@ -68,6 +68,11 @@ class Player:
         self.timer = 0
         self.speedup_cooldown = 5
 
+        self.shoot_timer = 0
+        self.shoot_cooldown = 20
+        self.last_shoot = pygame.time.get_ticks()
+        self.is_enter_down = False
+
         self.get_hearts_xys()
 
         self.last_heart_y = 40
@@ -93,6 +98,14 @@ class Player:
                         self.draw_speedup = False
                         self.last_speedup = None
                         self.timer = 0
+
+            if self.is_enter_down and self.shoot_timer <= 0:
+                self.shoot()
+                self.shoot_timer = self.shoot_cooldown
+            else:
+                self.shoot_timer -= 1
+
+
 
             if sum(keys) >= 1:  # preveri ali je bila sploh kakšna tipka pritisnjena in, če ja, pogleda, če je bila to katera izmed kontrol za playerja
                 if keys[self.keyboard_controls.get("up")]:
@@ -175,7 +188,7 @@ class Player:
         if self.killed_boss:
             self.update_health(2)
             self.killed_boss = False
-            self.__init__(self.points_label, self.dash_left_right, self.dash_up_down, self.boom_sprite, self.fuel_fire_sprite, self.player_hearts, self.player_sprites, self.x, self.y, self.bullet_sprites, self.player_num, self.joysticks, self.joystick_index, self.max_health)
+            self.__init__(self.points_label, self.dash_left_right, self.dash_up_down, self.boom_sprite, self.fuel_fire_sprite, self.player_hearts, self.player_sprites, self.x, self.y, self.bullet_sprites, self.player_num, self.joysticks, self.joystick_index, self.max_health, self.points)
             if self.player_num == 2:
                 self.set_controls({
                     "up": pygame.K_w,
@@ -186,42 +199,41 @@ class Player:
                     "dash": pygame.K_SPACE
                 })
 
+    def shoot(self):
+        self.sfx.play()
+        self.bullets.append(Bullet(self.bullet_sprites, self, self.x, self.y, self.bullet_dmg_give))
+
     def event_handler(self, event: pygame.event):
         # print(self.shooting)
-        if event.type == pygame.JOYBUTTONDOWN:
-            if event.joy == self.joysticks[self.joystick_index][1]:
-                # print(event.button)
-                if event.button == 0:
-                    self.shooting = True
-                    self.sfx.play()
-                    self.bullets.append(Bullet(self.bullet_sprites, self, self.x, self.y, self.bullet_dmg_give))
-                if event.button == 5:
-                    self.speedup = True
-        if event.type == pygame.JOYBUTTONUP:
-            if event.joy == self.joysticks[self.joystick_index][1]:
-                if event.button == 0:
-                    self.shooting = False
-        if event.type == pygame.JOYAXISMOTION:
-            if event.joy == self.joysticks[self.joystick_index][1]:
-                # print(event.axis)
-                if event.axis < 2:
-                    self.motion[event.axis] = event.value
+        if self.joystick_index != -1:
+            if event.type == pygame.JOYBUTTONDOWN:
+                if event.joy == self.joysticks[self.joystick_index][1]:
+                    if event.button == 0:
+                        self.is_enter_down = True
+                        self.shoot()
+                    if event.button == 5:
+                        self.speedup = True
+            if event.type == pygame.JOYBUTTONUP:
+                if event.joy == self.joysticks[self.joystick_index][1]:
+                    if event.button == 0:
+                        self.is_enter_down = False
+            if event.type == pygame.JOYAXISMOTION:
+                if event.joy == self.joysticks[self.joystick_index][1]:
+                    if event.axis < 2:
+                        self.motion[event.axis] = event.value
 
-        if event.type == pygame.JOYHATMOTION:
-            if event.joy == self.joysticks[self.joystick_index][1]:
-                pass
-        # if self.shooting:
-        #     if self.bullet_cooldown <= 0:
-        #         self.bullet_cooldown = 2
-        #         self.bullets.append(Bullet(self.bullet_sprites, self, self.x, self.y))
-        #     else:
-        #         self.bullet_cooldown -= 1
+            if event.type == pygame.JOYHATMOTION:
+                if event.joy == self.joysticks[self.joystick_index][1]:
+                    pass
         if event.type == pygame.KEYDOWN:
             if event.key == self.keyboard_controls.get("dash"):
                 self.speedup = True
             if event.key == self.keyboard_controls.get("fire"):
-                self.sfx.play()
-                self.bullets.append(Bullet(self.bullet_sprites, self, self.x, self.y, self.bullet_dmg_give))
+                self.is_enter_down = True
+                self.shoot()
+        if event.type == pygame.KEYUP:
+            if event.key == self.keyboard_controls.get("fire"):
+                self.is_enter_down = False
 
     # change moving speed
     def set_move_speed(self, new_move_speed):
@@ -278,6 +290,7 @@ class Player:
                 else:
                     self.bullet_sprites = pickup.bullet_sprite
                     self.bullet_dmg_give = pickup.dmg_give
+                    self.shoot_cooldown = pickup.shoot_cooldown
                     # print("bullet dmg = ", self.bullet.dmg_give)
                 pickup.last_spawn_time = pygame.time.get_ticks()
             else:

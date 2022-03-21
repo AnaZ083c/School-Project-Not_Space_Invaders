@@ -8,7 +8,7 @@ import pygame
 
 
 class Pickup:
-    def __init__(self, pickup_sprite: Sprite, spawn_cooldown: float = 2.0, fall_speed: float = 1.5, sfx_index: int = 0, name: str = "pickup", bullet_sprite: Sprite = None, dmg_give: int = 0):
+    def __init__(self, pickup_sprite: Sprite, spawn_cooldown: float = 2.0, fall_speed: float = 1.5, sfx_index: int = 0, name: str = "pickup", bullet_sprite: Sprite = None, dmg_give: int = 0, shoot_cooldown: int = 20):
         self.pickup_sprite = pickup_sprite
         self.name = name
         self.bullet_sprite = bullet_sprite
@@ -18,6 +18,7 @@ class Pickup:
         self.dir_x = 0
         self.timer = 0
         self.dmg_give = dmg_give
+        self.shoot_cooldown = shoot_cooldown
 
         self.sfx_index = sfx_index
         self.pickup_sfx = pygame.mixer.Sound(pickup_sfxs[self.sfx_index])

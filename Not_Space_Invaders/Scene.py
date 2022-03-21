@@ -267,7 +267,8 @@ player1_controls_controller = {
     "right": [pygame.K_RIGHT, "L pad"],
     "fire": [pygame.K_KP_ENTER, "A"],
     "dash": [pygame.K_KP3, "RB"],
-    "pause": [pygame.K_F10, ""]
+    "pause": [pygame.K_F10, ""],
+    "exit to menu": [pygame.K_F5, ""]
 }
 
 player2_controls_controller = {
@@ -277,7 +278,8 @@ player2_controls_controller = {
     "right": [pygame.K_d, "L pad"],
     "fire": [pygame.K_k, "A"],
     "dash": [pygame.K_SPACE, "RB"],
-    "pause": [pygame.K_F10, ""]
+    "pause": [pygame.K_F10, ""],
+    "exit to menu": [pygame.K_F5, ""]
 }
 
 player2_controls = {
@@ -297,6 +299,7 @@ boss_time = False
 
 killed = 0
 skipped = 0
+current_boss = 0
 
 
 def update_level():
@@ -338,9 +341,38 @@ def reset_level_wave():
     global level
     global wave
     global lvl_file
+    global boss_time
+    global killed
+    global skipped
+    global current_boss
+    global player1_name
+    global player2_name
+    global player1_joyid
+    global player2_joyid
+    global p1_controller_chosen
+    global p2_controller_chosen
+    global p1_p2_controllers_chosen
+    global controller_chosen
+    global is_multiplayer
+    global joysticks
+
     level = 1
     wave = 1
     lvl_file = LEVELS + 'level' + str(level) + '_' + str(wave) + '.ens'
+    boss_time = False
+    killed = 0
+    skipped = 0
+    current_boss = 0
+    player1_name = 'Player 1'
+    player2_name = 'Player 2'
+
+    player1_joyid = 0
+    player2_joyid = 0
+    controller_chosen = False
+    p1_controller_chosen = False
+    p2_controller_chosen = False
+    p1_p2_controllers_chosen = [p1_controller_chosen, p2_controller_chosen]
+    is_multiplayer = False
 
 
 def delay(delay_time, timer, start_time):
@@ -361,10 +393,10 @@ boss_label_xy = (WIDTH/2, HEIGHT/2 - 80)
 boss_label = Label("BOSS num. " + str(level), boss_label_xy[0], boss_label_xy[1],
                    (255, 255, 0), boss_font_size, FONT, 'center', boss_label_xy)
 
-pause_font_size = int(90)
-pause_label_xy = (WIDTH/2, HEIGHT/2 - 80)
+pause_font_size = int(150)
+pause_label_xy = (WIDTH/2, HEIGHT/2 - 200)
 pause_label = Label("PAUSED", pause_label_xy[0], pause_label_xy[1],
-                   (255, 200, 0), pause_font_size, FONT, 'center', pause_label_xy)
+                    (255, 100, 0), pause_font_size, FONT, 'center', pause_label_xy)
 
 
 death_font_size = int(100)
@@ -491,6 +523,7 @@ class Scene:
 class TitleScene(Scene):
     def __init__(self, sprites):
         super().__init__(sprites)
+        reset_level_wave()
 
         # create labels
         self.labels = [
@@ -1221,9 +1254,6 @@ class ControllerInit(Scene):
         self.labels[3].show(window)
 
 
-current_boss = 0
-
-
 """""""""""""""""""""""""""
     SINGLEPLAYER GAME SCENE
 """""""""""""""""""""""""""
@@ -1233,11 +1263,6 @@ class Singleplayer(Scene):
     def __init__(self, sprites):
         super().__init__(sprites)
         self.max_points = create_random_levels()
-
-        global level
-        global wave
-        level = 1
-        wave = 1
 
         global joysticks
         self.heart_img_size = FRAME_OFFSET * self.sprites["heart"].scale
@@ -1293,23 +1318,23 @@ class Singleplayer(Scene):
         self.enemies_num = len(self.enemies)
 
         self.bosses = [
-            FirstBoss(self.sprites["explosion"], self.sprites["boss-bar"], self.sprites["first-boss"], WIDTH / 2, HEIGHT / 4, self.enemy_bullets[0], 70.0),
-            SecondBoss(self.sprites["explosion"], self.sprites["boss-bar"], self.sprites["second-boss"], WIDTH / 2, HEIGHT / 4, self.enemy_bullets[1], 65.0),
-            ThirdBoss(self.sprites["explosion"], self.sprites["boss-bar"], self.sprites["third-boss"], WIDTH / 2, HEIGHT / 4, self.enemy_bullets[2], 55.0),
-            FourthBoss(self.sprites["explosion"], self.sprites["boss-bar"], self.sprites["fourth-boss"], WIDTH / 2, HEIGHT / 4, self.enemy_bullets[3], 50.0),
-            FinalBoss(self.sprites["explosion"], self.sprites["boss-bar"], self.sprites["final-boss"], WIDTH / 2, HEIGHT / 4, self.enemy_bullets[1], 45.0),
+            FirstBoss(self.sprites["explosion"], self.sprites["boss-bar"], self.sprites["first-boss"], WIDTH / 2, HEIGHT / 4, self.enemy_bullets[0], 25.0),
+            SecondBoss(self.sprites["explosion"], self.sprites["boss-bar"], self.sprites["second-boss"], WIDTH / 2, HEIGHT / 4, self.enemy_bullets[1], 20.0),
+            ThirdBoss(self.sprites["explosion"], self.sprites["boss-bar"], self.sprites["third-boss"], WIDTH / 2, HEIGHT / 4, self.enemy_bullets[2], 15.0),
+            FourthBoss(self.sprites["explosion"], self.sprites["boss-bar"], self.sprites["fourth-boss"], WIDTH / 2, HEIGHT / 4, self.enemy_bullets[3], 10.0),
+            FinalBoss(self.sprites["explosion"], self.sprites["boss-bar"], self.sprites["final-boss"], WIDTH / 2, HEIGHT / 4, self.enemy_bullets[1], 5.0),
         ]
 
         self.pickups = [
-            Pickup(self.sprites["green-pickup"], 5.0, 1.5, 0, "green", self.player_bullets[3], 2),
-            Pickup(self.sprites["purple-pickup"], 3.0, 2.0, 0, "purple", self.player_bullets[0], 3),
-            Pickup(self.sprites["blue-pickup"], 10.0, 3.0, 0, "blue", self.player_bullets[1], 4),
-            Pickup(self.sprites["yellow-pickup"], 8.0, 2.5, 0, "yellow", self.player_bullets[2], 5),
-            Pickup(self.sprites["red-pickup"], 8.0, 2.5, 0, "red", self.player_bullets[4], 1),
+            Pickup(self.sprites["green-pickup"], 5.0, 1.5, 0, "green", self.player_bullets[3], 2, GREEN_B),
+            Pickup(self.sprites["purple-pickup"], 3.0, 2.0, 0, "purple", self.player_bullets[0], 3, PURPLE_B),
+            Pickup(self.sprites["blue-pickup"], 10.0, 3.0, 0, "blue", self.player_bullets[1], 4, BLUE_B),
+            Pickup(self.sprites["yellow-pickup"], 8.0, 2.5, 0, "yellow", self.player_bullets[2], 5, YELLOW_B),
+            Pickup(self.sprites["red-pickup"], 8.0, 2.5, 0, "red", self.player_bullets[4], 1, RED_B),
         ]
 
         self.constant_pickups = [
-            Pickup(self.sprites["red-pickup"], 8.0, 2.5, 0, "red", self.player_bullets[4], 1),
+            Pickup(self.sprites["red-pickup"], 8.0, 2.5, 0, "red", self.player_bullets[4], 1, RED_B),
             Pickup(self.sprites["heal-pickup"], 9.0, 3.5, 3, "heal", None)
         ]
 
@@ -1334,6 +1359,9 @@ class Singleplayer(Scene):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_F10:
                     self.pause = not self.pause
+                if event.key == pygame.K_F5:
+                    save_points(POINTS, [[self.player1, player1_name]])
+                    self.switch_to_scene(TitleScene(self.sprites))
 
         if self.game_over:
             save_points(POINTS, [[self.player1, player1_name]])
@@ -1383,17 +1411,20 @@ class Singleplayer(Scene):
             if not self.show_boss_label and self.boss_time:
                 self.bosses[current_boss].update(self.player1.bullets)
 
-            if self.bosses[current_boss].helth <= 0:
+            if (not (type(self.bosses[current_boss]) == bool)) and self.bosses[current_boss].helth <= 0:
                 # self.bosses[0].defeated = True
                 self.last_update = pygame.time.get_ticks()
                 self.boss_killed_animation.append([Animation(self.sprites["boss-explosion"], 250),
                                                    self.bosses[current_boss].x, self.bosses[current_boss].y])
                 self.enemy_explode_sfx.play()
+                self.player1.points += self.bosses[current_boss].worth
                 self.bosses[current_boss] = True
-                current_boss += 1
+
                 self.boss_time = False
                 self.show_last_boss_bar = True
+
                 self.player1.killed_boss = True
+                current_boss += 1
                 self.switch_level = True
                 update_wave()
                 self.boss_label = Label("BOSS num. " + str(level), boss_label_xy[0], boss_label_xy[1],
@@ -1427,7 +1458,7 @@ class Singleplayer(Scene):
         window.screen.fill(BLACK)
         animate_stars(window)
 
-        for count in range(level):
+        for count in range(5):
             self.pickups[count].show(window)
 
         for const_pickup in self.constant_pickups:
@@ -1457,8 +1488,7 @@ class Singleplayer(Scene):
         for killed_animation, an_x, an_y in self.killed_animations:
             killed_animation.animate(window, an_x, an_y, False, False)
 
-        if len(self.enemies) != 0 and self.player1.health <= 0:
-            # self.sprites["death"].show_frames(window, (WIDTH / 2 - (self.death_img_size / 2), HEIGHT / 2 - (self.death_img_size / 2)))
+        if (len(self.enemies) != 0 or self.boss_time) and self.player1.health <= 0:
             self.game_over = True
         if (type(self.bosses[len(self.bosses) - 1]) == bool and self.bosses[len(self.bosses) - 1]) and get_points_percent(self.max_points, self.player1.points) >= 70:
             self.win = True
@@ -1503,10 +1533,14 @@ class Multiplayer(Scene):
         super().__init__(sprites)
         self.max_points = create_random_levels()
 
-        global level
-        global wave
-        level = 1
-        wave = 1
+        global player1_joyid
+        global player2_joyid
+        if p1_controller_chosen and not p2_controller_chosen:
+            player1_joyid = 0
+            player2_joyid = -1
+        elif p2_controller_chosen and not p1_controller_chosen:
+            player1_joyid = -1
+            player2_joyid = 0
 
         global joysticks
         self.heart_img_size = FRAME_OFFSET * self.sprites["heart"].scale
@@ -1584,15 +1618,15 @@ class Multiplayer(Scene):
         ]
 
         self.pickups = [
-            Pickup(self.sprites["green-pickup"], 5.0, 1.5, 0, "green", self.player_bullets[3], 2),
-            Pickup(self.sprites["purple-pickup"], 3.0, 2.0, 0, "purple", self.player_bullets[0], 3),
-            Pickup(self.sprites["blue-pickup"], 10.0, 3.0, 0, "blue", self.player_bullets[1], 4),
-            Pickup(self.sprites["yellow-pickup"], 8.0, 2.5, 0, "yellow", self.player_bullets[2], 5),
-            Pickup(self.sprites["red-pickup"], 8.0, 2.5, 0, "red", self.player_bullets[4], 1),
+            Pickup(self.sprites["green-pickup"], 5.0, 1.5, 0, "green", self.player_bullets[3], 2, GREEN_B),
+            Pickup(self.sprites["purple-pickup"], 3.0, 2.0, 0, "purple", self.player_bullets[0], 3, PURPLE_B),
+            Pickup(self.sprites["blue-pickup"], 10.0, 3.0, 0, "blue", self.player_bullets[1], 4, BLUE_B),
+            Pickup(self.sprites["yellow-pickup"], 8.0, 2.5, 0, "yellow", self.player_bullets[2], 5, YELLOW_B),
+            Pickup(self.sprites["red-pickup"], 8.0, 2.5, 0, "red", self.player_bullets[4], 1, RED_B),
         ]
 
         self.constant_pickups = [
-            Pickup(self.sprites["red-pickup"], 8.0, 2.5, 0, "red", self.player_bullets[4], 1),
+            Pickup(self.sprites["red-pickup"], 8.0, 2.5, 0, "red", self.player_bullets[4], 1, RED_B),
             Pickup(self.sprites["heal-pickup"], 9.0, 3.5, 3, "heal", None)
         ]
 
@@ -1618,6 +1652,9 @@ class Multiplayer(Scene):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_F10:
                     self.pause = not self.pause
+                if event.key == pygame.K_F5:
+                    save_points(POINTS, [[self.player1, player1_name]])
+                    self.switch_to_scene(TitleScene(self.sprites))
 
         if self.game_over:
             save_points(POINTS, [[self.player1, player1_name], [self.player2, player2_name]])
@@ -1674,14 +1711,17 @@ class Multiplayer(Scene):
                 self.boss_killed_animation.append([Animation(self.sprites["boss-explosion"], 250),
                                                    self.bosses[current_boss].x, self.bosses[current_boss].y])
                 self.enemy_explode_sfx.play()
+
+                self.player1.points += self.bosses[current_boss].worth
+                self.player2.points += self.bosses[current_boss].worth
                 self.bosses[current_boss] = True
-                current_boss += 1
+
                 self.boss_time = False
                 self.show_last_boss_bar = True
 
                 self.player1.killed_boss = True
                 self.player2.killed_boss = True
-
+                current_boss += 1
                 self.switch_level = True
                 update_wave()
                 self.boss_label = Label("BOSS num. " + str(level), boss_label_xy[0], boss_label_xy[1],
@@ -1689,7 +1729,7 @@ class Multiplayer(Scene):
                 self.new_set_label.update("LEVEL " + str(level) + ": Wave " + str(wave) + " of 3", (255, 255, 0))
 
             # pickup update
-            for count in range(level):
+            for count in range(5):
                 self.pickups[count].update()
 
             for const_pickup in self.constant_pickups:
@@ -1749,7 +1789,7 @@ class Multiplayer(Scene):
         for killed_animation, an_x, an_y in self.killed_animations:
             killed_animation.animate(window, an_x, an_y, False, False)
 
-        if len(self.enemies) != 0 and self.player1.health <= 0 and self.player2.health <= 0:
+        if (len(self.enemies) != 0 or self.boss_time) and self.player1.health <= 0 and self.player2.health <= 0:
             # self.sprites["death"].show_frames(window, (WIDTH / 2 - (self.death_img_size / 2), HEIGHT / 2 - (self.death_img_size / 2)))
             self.game_over = True
         if (type(self.bosses[len(self.bosses) - 1]) == bool and self.bosses[len(self.bosses) - 1]) and (get_points_percent(self.max_points, self.player1.points + self.player2.points) >= 70):
