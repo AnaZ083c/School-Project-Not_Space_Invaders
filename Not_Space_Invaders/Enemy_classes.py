@@ -181,10 +181,10 @@ class Boss(Enemy):
 
 
 class FirstBoss(Boss):  # ANGRY ALIEN BOSS
-    def __init__(self, boom, boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown=40.0, worth=1000, dmg_give=1, max_helth=50):
+    def __init__(self, boom, boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown=40.0, worth=1000, dmg_give=1, max_helth=100):
         super(FirstBoss, self).__init__(boom, boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown, worth, dmg_give, max_helth)
-        self.helth = 50
-        self.max_helth = 50
+        self.helth = 100
+        self.max_helth = 100
         self.step = self.max_helth // len(boss_bar.frames)
         self.boss_bar_frame = 0
         self.defeated = False
@@ -259,11 +259,11 @@ class FirstBoss(Boss):  # ANGRY ALIEN BOSS
 
 
 class SecondBoss(Boss):  # OCTOPUS BOSS
-    def __init__(self, boom, boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown=40.0, worth=1000, dmg_give=2, max_helth=100):
+    def __init__(self, boom, boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown=40.0, worth=1000, dmg_give=2, max_helth=200):
         super(SecondBoss, self).__init__(boom, boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown, worth, dmg_give, max_helth)
-        self.helth = 100
+        self.helth = 200
         self.animation = Animation(boss_sprites, 300)
-        self.max_helth = 100
+        self.max_helth = 200
         self.step = self.max_helth // len(boss_bar.frames)
         self.boss_bar_frame = 0
 
@@ -356,11 +356,11 @@ class SecondBoss(Boss):  # OCTOPUS BOSS
 
 
 class ThirdBoss(Boss):  # ROBOT BOSS
-    def __init__(self, boom, boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown=40.0, worth=1000, dmg_give=3, max_helth=150):
+    def __init__(self, boom, boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown=40.0, worth=1000, dmg_give=3, max_helth=300):
         super(ThirdBoss, self).__init__(boom, boss_bar, boss_sprites, x, y, bullet_sprites, shoot_cooldown, worth, dmg_give, max_helth)
-        self.helth = 150
+        self.helth = 300
         # self.animation = Animation(boss_sprites, 300)
-        self.max_helth = 150
+        self.max_helth = 300
         self.step = self.max_helth // len(boss_bar.frames)
         self.boss_bar_frame = 0
 
@@ -370,19 +370,25 @@ class ThirdBoss(Boss):  # ROBOT BOSS
         self.break_step = self.helth // 3
 
         self.current_frame = 0
+        self.no_arm_frame = random.randint(1, 2)
         self.defeated = False
 
     def boss_bar_handler(self):
         if self.get_health_percent() == 100:
             self.boss_bar_frame = 0
+            self.current_frame = 0
         elif 70 < self.get_health_percent() <= 80:
             self.boss_bar_frame = 1
+            self.current_frame = self.no_arm_frame
         elif 60 < self.get_health_percent() <= 70:
             self.boss_bar_frame = 2
+            self.current_frame = self.no_arm_frame
         elif 30 < self.get_health_percent() <= 50:
             self.boss_bar_frame = 3
+            self.current_frame = 3
         elif self.get_health_percent() <= 30:
             self.boss_bar_frame = 4
+            self.current_frame = 3
 
     def update(self, bullet_list):
         current_time = pygame.time.get_ticks()

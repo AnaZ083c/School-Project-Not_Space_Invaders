@@ -1234,6 +1234,11 @@ class Singleplayer(Scene):
         super().__init__(sprites)
         self.max_points = create_random_levels()
 
+        global level
+        global wave
+        level = 1
+        wave = 1
+
         global joysticks
         self.heart_img_size = FRAME_OFFSET * self.sprites["heart"].scale
         self.death_img_size = FRAME_OFFSET * self.sprites["death"].scale
@@ -1288,18 +1293,19 @@ class Singleplayer(Scene):
         self.enemies_num = len(self.enemies)
 
         self.bosses = [
-            FirstBoss(self.sprites["explosion"], self.sprites["boss-bar"], self.sprites["first-boss"], WIDTH / 2, HEIGHT / 4, self.enemy_bullets[0], 90.0),
-            SecondBoss(self.sprites["explosion"], self.sprites["boss-bar"], self.sprites["second-boss"], WIDTH / 2, HEIGHT / 4, self.enemy_bullets[1], 85.0),
-            ThirdBoss(self.sprites["explosion"], self.sprites["boss-bar"], self.sprites["third-boss"], WIDTH / 2, HEIGHT / 4, self.enemy_bullets[2], 80.0),
-            FourthBoss(self.sprites["explosion"], self.sprites["boss-bar"], self.sprites["fourth-boss"], WIDTH / 2, HEIGHT / 4, self.enemy_bullets[3], 75.0),
-            FinalBoss(self.sprites["explosion"], self.sprites["boss-bar"], self.sprites["final-boss"], WIDTH / 2, HEIGHT / 4, self.enemy_bullets[1], 70.0),
+            FirstBoss(self.sprites["explosion"], self.sprites["boss-bar"], self.sprites["first-boss"], WIDTH / 2, HEIGHT / 4, self.enemy_bullets[0], 70.0),
+            SecondBoss(self.sprites["explosion"], self.sprites["boss-bar"], self.sprites["second-boss"], WIDTH / 2, HEIGHT / 4, self.enemy_bullets[1], 65.0),
+            ThirdBoss(self.sprites["explosion"], self.sprites["boss-bar"], self.sprites["third-boss"], WIDTH / 2, HEIGHT / 4, self.enemy_bullets[2], 55.0),
+            FourthBoss(self.sprites["explosion"], self.sprites["boss-bar"], self.sprites["fourth-boss"], WIDTH / 2, HEIGHT / 4, self.enemy_bullets[3], 50.0),
+            FinalBoss(self.sprites["explosion"], self.sprites["boss-bar"], self.sprites["final-boss"], WIDTH / 2, HEIGHT / 4, self.enemy_bullets[1], 45.0),
         ]
 
         self.pickups = [
             Pickup(self.sprites["green-pickup"], 5.0, 1.5, 0, "green", self.player_bullets[3], 2),
             Pickup(self.sprites["purple-pickup"], 3.0, 2.0, 0, "purple", self.player_bullets[0], 3),
             Pickup(self.sprites["blue-pickup"], 10.0, 3.0, 0, "blue", self.player_bullets[1], 4),
-            Pickup(self.sprites["yellow-pickup"], 8.0, 2.5, 0, "yellow", self.player_bullets[2], 5)
+            Pickup(self.sprites["yellow-pickup"], 8.0, 2.5, 0, "yellow", self.player_bullets[2], 5),
+            Pickup(self.sprites["red-pickup"], 8.0, 2.5, 0, "red", self.player_bullets[4], 1),
         ]
 
         self.constant_pickups = [
@@ -1497,6 +1503,11 @@ class Multiplayer(Scene):
         super().__init__(sprites)
         self.max_points = create_random_levels()
 
+        global level
+        global wave
+        level = 1
+        wave = 1
+
         global joysticks
         self.heart_img_size = FRAME_OFFSET * self.sprites["heart"].scale
         self.death_img_size = FRAME_OFFSET * self.sprites["death"].scale
@@ -1560,18 +1571,24 @@ class Multiplayer(Scene):
         self.enemies_num = len(self.enemies)
 
         self.bosses = [
-            FirstBoss(self.sprites["explosion"], self.sprites["boss-bar"], self.sprites["first-boss"], WIDTH / 2, HEIGHT / 4, self.enemy_bullets[0], 90.0),
-            SecondBoss(self.sprites["explosion"], self.sprites["boss-bar"], self.sprites["second-boss"], WIDTH / 2, HEIGHT / 4, self.enemy_bullets[1], 85.0),
-            ThirdBoss(self.sprites["explosion"], self.sprites["boss-bar"], self.sprites["third-boss"], WIDTH / 2, HEIGHT / 4, self.enemy_bullets[2], 80.0),
-            FourthBoss(self.sprites["explosion"], self.sprites["boss-bar"], self.sprites["fourth-boss"], WIDTH / 2, HEIGHT / 4, self.enemy_bullets[3], 75.0),
-            FinalBoss(self.sprites["explosion"], self.sprites["boss-bar"], self.sprites["final-boss"], WIDTH / 2, HEIGHT / 4, self.enemy_bullets[1], 70.0),
+            FirstBoss(self.sprites["explosion"], self.sprites["boss-bar"], self.sprites["first-boss"], WIDTH / 2,
+                      HEIGHT / 4, self.enemy_bullets[0], 70.0),
+            SecondBoss(self.sprites["explosion"], self.sprites["boss-bar"], self.sprites["second-boss"], WIDTH / 2,
+                       HEIGHT / 4, self.enemy_bullets[1], 65.0),
+            ThirdBoss(self.sprites["explosion"], self.sprites["boss-bar"], self.sprites["third-boss"], WIDTH / 2,
+                      HEIGHT / 4, self.enemy_bullets[2], 55.0),
+            FourthBoss(self.sprites["explosion"], self.sprites["boss-bar"], self.sprites["fourth-boss"], WIDTH / 2,
+                       HEIGHT / 4, self.enemy_bullets[3], 50.0),
+            FinalBoss(self.sprites["explosion"], self.sprites["boss-bar"], self.sprites["final-boss"], WIDTH / 2,
+                      HEIGHT / 4, self.enemy_bullets[1], 45.0),
         ]
 
         self.pickups = [
             Pickup(self.sprites["green-pickup"], 5.0, 1.5, 0, "green", self.player_bullets[3], 2),
             Pickup(self.sprites["purple-pickup"], 3.0, 2.0, 0, "purple", self.player_bullets[0], 3),
             Pickup(self.sprites["blue-pickup"], 10.0, 3.0, 0, "blue", self.player_bullets[1], 4),
-            Pickup(self.sprites["yellow-pickup"], 8.0, 2.5, 0, "yellow", self.player_bullets[2], 5)
+            Pickup(self.sprites["yellow-pickup"], 8.0, 2.5, 0, "yellow", self.player_bullets[2], 5),
+            Pickup(self.sprites["red-pickup"], 8.0, 2.5, 0, "red", self.player_bullets[4], 1),
         ]
 
         self.constant_pickups = [

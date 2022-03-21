@@ -49,15 +49,15 @@ def read_enemies(infilename: str, enemy_ids: list, boom: Sprite, bullets: list, 
 
             elif ids[j][i] == '1':
                 shoot_cooldown = random.randrange(int(min_), int(max_), 5)
-                enemy_sprite = Enemy(boom, enemy_ids[0], curr_x_offset, curr_y_offset, bullets[0], shoot_cooldown, 3, 1, 3)
+                enemy_sprite = Enemy(boom, enemy_ids[0], curr_x_offset, curr_y_offset, bullets[0], shoot_cooldown, 6, 1, 6)
                 enemies_list.append(enemy_sprite)
             elif ids[j][i] == '2':
                 shoot_cooldown = random.randrange(int(min_), int(max_), 5)
-                enemy_sprite = Enemy(boom, enemy_ids[1], curr_x_offset, curr_y_offset, bullets[1], shoot_cooldown, 5, 2, 5)
+                enemy_sprite = Enemy(boom, enemy_ids[1], curr_x_offset, curr_y_offset, bullets[1], shoot_cooldown, 12, 2, 12)
                 enemies_list.append(enemy_sprite)
             elif ids[j][i] == '3':
                 shoot_cooldown = random.randrange(int(min_), int(max_), 5)
-                enemy_sprite = Enemy(boom, enemy_ids[2], curr_x_offset, curr_y_offset, bullets[2], shoot_cooldown, 7, 3, 7)
+                enemy_sprite = Enemy(boom, enemy_ids[2], curr_x_offset, curr_y_offset, bullets[2], shoot_cooldown, 18, 3, 18)
                 enemies_list.append(enemy_sprite)
 
     return enemies_list
@@ -86,11 +86,11 @@ def create_random_levels():
                     elif lvl >= 3:
                         enemy_id = random.randint(0, 3)
                     if enemy_id == 1:
-                        max_points += 3
+                        max_points += 6
                     elif enemy_id == 2:
-                        max_points += 5
+                        max_points += 12
                     elif enemy_id == 3:
-                        max_points += 7
+                        max_points += 18
                     file.write(str(enemy_id)+" ")
                 file.write("\n")
 
