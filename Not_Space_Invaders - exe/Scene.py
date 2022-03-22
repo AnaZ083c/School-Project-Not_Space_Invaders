@@ -1425,8 +1425,9 @@ class Singleplayer(Scene):
 
                 self.player1.killed_boss = True
                 current_boss += 1
-                self.switch_level = True
-                update_wave()
+                if level < 5:
+                    self.switch_level = True
+                    update_wave()
                 self.boss_label = Label("BOSS num. " + str(level), boss_label_xy[0], boss_label_xy[1],
                                         (255, 255, 0), boss_font_size, FONT, 'center', boss_label_xy)
                 self.new_set_label.update("LEVEL " + str(level) + ": Wave " + str(wave) + " of 3", (255, 255, 0))
@@ -1458,7 +1459,7 @@ class Singleplayer(Scene):
         window.screen.fill(BLACK)
         animate_stars(window)
 
-        for count in range(5):
+        for count in range(level):
             self.pickups[count].show(window)
 
         for const_pickup in self.constant_pickups:
@@ -1722,14 +1723,15 @@ class Multiplayer(Scene):
                 self.player1.killed_boss = True
                 self.player2.killed_boss = True
                 current_boss += 1
-                self.switch_level = True
-                update_wave()
+                if level < 5:
+                    self.switch_level = True
+                    update_wave()
                 self.boss_label = Label("BOSS num. " + str(level), boss_label_xy[0], boss_label_xy[1],
                                         (255, 255, 0), boss_font_size, FONT, 'center', boss_label_xy)
                 self.new_set_label.update("LEVEL " + str(level) + ": Wave " + str(wave) + " of 3", (255, 255, 0))
 
             # pickup update
-            for count in range(5):
+            for count in range(level):
                 self.pickups[count].update()
 
             for const_pickup in self.constant_pickups:
