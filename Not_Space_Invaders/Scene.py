@@ -362,7 +362,7 @@ def reset_level_wave():
     boss_time = False
     killed = 0
     skipped = 0
-    current_boss = 0
+    current_boss = 4
     player1_name = 'Player 1'
     player2_name = 'Player 2'
 
@@ -1424,8 +1424,8 @@ class Singleplayer(Scene):
                 self.show_last_boss_bar = True
 
                 self.player1.killed_boss = True
-                current_boss += 1
-                if level < 5:
+                if level < 4:
+                    current_boss += 1
                     self.switch_level = True
                     update_wave()
                 self.boss_label = Label("BOSS num. " + str(level), boss_label_xy[0], boss_label_xy[1],
@@ -1722,8 +1722,9 @@ class Multiplayer(Scene):
 
                 self.player1.killed_boss = True
                 self.player2.killed_boss = True
-                current_boss += 1
-                if level < 5:
+
+                if level < 4:
+                    current_boss += 1
                     self.switch_level = True
                     update_wave()
                 self.boss_label = Label("BOSS num. " + str(level), boss_label_xy[0], boss_label_xy[1],
