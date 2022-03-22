@@ -362,7 +362,7 @@ def reset_level_wave():
     boss_time = False
     killed = 0
     skipped = 0
-    current_boss = 4
+    current_boss = 0
     player1_name = 'Player 1'
     player2_name = 'Player 2'
 
@@ -1424,8 +1424,10 @@ class Singleplayer(Scene):
                 self.show_last_boss_bar = True
 
                 self.player1.killed_boss = True
-                if level < 4:
+                if current_boss < len(self.bosses) - 1:
                     current_boss += 1
+
+                if level < 5:
                     self.switch_level = True
                     update_wave()
                 self.boss_label = Label("BOSS num. " + str(level), boss_label_xy[0], boss_label_xy[1],
@@ -1606,16 +1608,11 @@ class Multiplayer(Scene):
         self.enemies_num = len(self.enemies)
 
         self.bosses = [
-            FirstBoss(self.sprites["explosion"], self.sprites["boss-bar"], self.sprites["first-boss"], WIDTH / 2,
-                      HEIGHT / 4, self.enemy_bullets[0], 70.0),
-            SecondBoss(self.sprites["explosion"], self.sprites["boss-bar"], self.sprites["second-boss"], WIDTH / 2,
-                       HEIGHT / 4, self.enemy_bullets[1], 65.0),
-            ThirdBoss(self.sprites["explosion"], self.sprites["boss-bar"], self.sprites["third-boss"], WIDTH / 2,
-                      HEIGHT / 4, self.enemy_bullets[2], 55.0),
-            FourthBoss(self.sprites["explosion"], self.sprites["boss-bar"], self.sprites["fourth-boss"], WIDTH / 2,
-                       HEIGHT / 4, self.enemy_bullets[3], 50.0),
-            FinalBoss(self.sprites["explosion"], self.sprites["boss-bar"], self.sprites["final-boss"], WIDTH / 2,
-                      HEIGHT / 4, self.enemy_bullets[1], 45.0),
+            FirstBoss(self.sprites["explosion"], self.sprites["boss-bar"], self.sprites["first-boss"], WIDTH / 2, HEIGHT / 4, self.enemy_bullets[0], 25.0),
+            SecondBoss(self.sprites["explosion"], self.sprites["boss-bar"], self.sprites["second-boss"], WIDTH / 2, HEIGHT / 4, self.enemy_bullets[1], 20.0),
+            ThirdBoss(self.sprites["explosion"], self.sprites["boss-bar"], self.sprites["third-boss"], WIDTH / 2, HEIGHT / 4, self.enemy_bullets[2], 15.0),
+            FourthBoss(self.sprites["explosion"], self.sprites["boss-bar"], self.sprites["fourth-boss"], WIDTH / 2, HEIGHT / 4, self.enemy_bullets[3], 10.0),
+            FinalBoss(self.sprites["explosion"], self.sprites["boss-bar"], self.sprites["final-boss"], WIDTH / 2, HEIGHT / 4, self.enemy_bullets[1], 5.0),
         ]
 
         self.pickups = [
@@ -1706,7 +1703,7 @@ class Multiplayer(Scene):
             if not self.show_boss_label and self.boss_time:
                 self.bosses[current_boss].update(self.player1.bullets + self.player2.bullets)
 
-            if self.bosses[current_boss].helth <= 0:
+            if (not (type(self.bosses[current_boss]) == bool)) and self.bosses[current_boss].helth <= 0:
                 # self.bosses[0].defeated = True
                 self.last_update = pygame.time.get_ticks()
                 self.boss_killed_animation.append([Animation(self.sprites["boss-explosion"], 250),
@@ -1723,8 +1720,10 @@ class Multiplayer(Scene):
                 self.player1.killed_boss = True
                 self.player2.killed_boss = True
 
-                if level < 4:
+                if current_boss < len(self.bosses) - 1:
                     current_boss += 1
+
+                if level < 5:
                     self.switch_level = True
                     update_wave()
                 self.boss_label = Label("BOSS num. " + str(level), boss_label_xy[0], boss_label_xy[1],
