@@ -22,7 +22,7 @@ pygame.font.init()
 # main menu
 title_size = int(100)
 title_xy = (WIDTH/2, HEIGHT/2 - 250)
-title_label = Label('totally NOT Space Invaders', title_xy[0], title_xy[1],
+title_label = Label('definitely NOT Space Invaders', title_xy[0], title_xy[1],
                     (255, 230, 0), title_size, FONT, 'center', title_xy)
 
 menu_font_size = int(60)
