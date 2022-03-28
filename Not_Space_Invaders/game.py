@@ -51,7 +51,7 @@ enemy_yellow_bullet = Sprite(sprite_sheet, 3, (7, 4 * FRAME_OFFSET), False)
 player_boss_sprites = Sprite(sprite_sheet, 3, (3, 0), False)  # a special boss
 
 # pickup sprites
-heal_pickup = Sprite(sprite_sheet, 1, (6, 0))
+heal_pickup = Sprite(sprite_sheet, 8, (0, 8 * FRAME_OFFSET))
 red_pickup = Sprite(sprite_sheet, 1, (8, 0))
 yellow_pickup = Sprite(sprite_sheet, 1, (6, FRAME_OFFSET))
 green_pickup = Sprite(sprite_sheet, 1, (6, 2 * FRAME_OFFSET))
@@ -76,6 +76,7 @@ boos_explosion = Sprite(sprite_sheet, 3, (5, FRAME_OFFSET), False, BOSS_IMAGE_SC
 
 # health sprites
 helth_sprite = Sprite(sprite_sheet, 1, (2, FRAME_OFFSET * 2), True, 0.2)
+dead_heart_sprite = Sprite(sprite_sheet, 1, (3, 3 * FRAME_OFFSET), True, 0.2)
 # helth_sprite.scale = ()
 helth_img_size = FRAME_OFFSET * helth_sprite.scale
 
@@ -91,6 +92,7 @@ octoboss_animation = Animation(octopus_boss, 300)
 
 sprites = {
     "heart": helth_sprite,
+    "dead-heart": dead_heart_sprite,
     "player1": player1_sprites,
     "player2": player2_sprites,
     "player_bullet": bullet_sprites,

@@ -49,11 +49,11 @@ yellow_bullet = Sprite(sprite_sheet, 3, (7, 4 * FRAME_OFFSET), False)
 player_boss_sprites = Sprite(sprite_sheet, 3, (3, 0), False)  # a special boss
 
 # pickup sprites
-heal_pickup = Sprite(sprite_sheet, 1, (6, 0))
-yellow_pickup = Sprite(sprite_sheet, 1, (6, FRAME_OFFSET))
-green_pickup = Sprite(sprite_sheet, 1, (6, 2 * FRAME_OFFSET))
-blue_pickup = Sprite(sprite_sheet, 1, (6, 3 * FRAME_OFFSET))
-purple_pickup = Sprite(sprite_sheet, 1, (6, 4 * FRAME_OFFSET))
+heal_pickup = Sprite(sprite_sheet, 8, (0, 8 * FRAME_OFFSET))
+yellow_pickup = Sprite(sprite_sheet, 3, (0, 10 * FRAME_OFFSET))
+green_pickup = Sprite(sprite_sheet, 3, (3, 9 * FRAME_OFFSET))
+blue_pickup = Sprite(sprite_sheet, 3, (3, 10 * FRAME_OFFSET))
+purple_pickup = Sprite(sprite_sheet, 3, (6, 9 * FRAME_OFFSET))
 
 # enemy sprites
 generic_enemy_sprites = Sprite(sprite_sheet, 1, (0, FRAME_OFFSET * 2))
@@ -93,6 +93,10 @@ bullet_animation = Animation(bullet_sprites, 80)
 octoboss_animation = Animation(octopus_boss, 300)
 fuel_fire_animation = Animation(fuel_fire, 100)
 boom_animation = Animation(explosion_sprites, 200)
+
+heal_animation = Animation(heal_pickup, 150)
+purple_animation = Animation(purple_pickup, 100)
+
 
 pickup = Pickup(green_pickup)
 planet = pygame.image.load(PLANET)
@@ -134,7 +138,7 @@ while window.running:
         star.check_if_i_should_reappear_on_top()
 
     # show frame image
-    window.screen.blit(planet, (0, 0))
+    heal_animation.animate(window, WIDTH/2, HEIGHT/2)
 
     """""""""""""""""""""""""""""""""""""""" flip display """""""""""""""""""""""""""""""""""""""""
     pygame.display.flip()  # always after drawing everything!!

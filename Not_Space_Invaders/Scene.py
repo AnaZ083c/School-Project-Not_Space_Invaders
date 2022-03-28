@@ -35,7 +35,7 @@ multiplayer_label = Label('Multiplayer', multiplayer_xy[0], multiplayer_xy[1],
                           TITANIUM_HWHITE, menu_font_size, FONT, 'center', multiplayer_xy)
 
 options_xy = (WIDTH/2, HEIGHT/2 + multiplayer_label.text.get_height()*2 - 40)
-options_label = Label('Points', options_xy[0], options_xy[1],
+options_label = Label('High scores', options_xy[0], options_xy[1],
                       TITANIUM_HWHITE, menu_font_size, FONT, 'center', options_xy)
 
 controls_xy = (WIDTH/2, HEIGHT/2 + options_label.text.get_height()*3 - 30)
@@ -48,7 +48,7 @@ exit_label = Label('Exit', exit_xy[0], exit_xy[1],
 
 # # Points menu
 points_title_xy = (WIDTH/2, HEIGHT/2 - 360)
-points_title = Label('Points', points_title_xy[0], points_title_xy[1],
+points_title = Label('High scores', points_title_xy[0], points_title_xy[1],
                      TITANIUM_HWHITE, menu_font_size, FONT, 'center', points_title_xy)
 
 back_points_xy = (WIDTH/2, HEIGHT/2 + exit_label.text.get_height()*7 - 30)
@@ -461,6 +461,9 @@ def create_controls_labels(p1_controls: dict, p2_controls: dict):
     for name in p1_controls.keys():
         control_keyboard = pygame.key.name(p1_controls[name][0])
         control_keyboard = control_keyboard.replace("[", "").replace("]", "")
+        if p1_controls[name][0] == pygame.K_KP_ENTER:
+            control_keyboard = "numpad " + control_keyboard
+
         control_controller = p1_controls[name][1]
         # print(control_keyboard)
         label = Label(f"{str(name)} ..... {control_keyboard}, {control_controller}", label_x, label_y,
@@ -483,6 +486,10 @@ def create_controls_labels(p1_controls: dict, p2_controls: dict):
     for name in p2_controls.keys():
         control_keyboard = pygame.key.name(p2_controls[name][0])
         control_controller = p2_controls[name][1]
+
+        if p2_controls[name][0] == pygame.K_KP_ENTER:
+            control_keyboard = "numpad " + control_keyboard
+
         label = Label(f"{str(name)} ..... {control_keyboard}, {control_controller}", label_x, label_y,
                       TITANIUM_HWHITE, font_size, FONT, 'center', (label_x, label_y))
         player2_labels.append(label)
@@ -1296,9 +1303,8 @@ class Singleplayer(Scene):
 
         global player1_name
         self.p1_title_label = Label(player1_name, self.heart_img_size - 40, 15, PLAYER1_COLOR, 40, FONT)
-        self.p1_points_label = Label(str(0), self.heart_img_size, 80, TITANIUM_HWHITE, 40, FONT,
-                                     'topleft',
-                                     (self.heart_img_size, 80))
+        self.p1_points_label = Label(str(0), 0, 0, TITANIUM_HWHITE, 40, FONT,
+                                     'topleft', (10, 50))
 
         self.player1 = Player(self.p1_points_label, self.sprites["dash-left-right"], self.sprites["dash-up-down"], self.sprites["explosion"], self.sprites["fuel-fire"], self.sprites["heart"], self.sprites["player1"],
                               image_size, HEIGHT-image_size, self.sprites["player_bullet"],
@@ -1585,12 +1591,11 @@ class Multiplayer(Scene):
         global player1_name
         global player2_name
         self.p1_title_label = Label(player1_name, self.heart_img_size - 40, 15, PLAYER1_COLOR, 40, FONT)
-        self.p1_points_label = Label(str(0), self.heart_img_size, 80, TITANIUM_HWHITE, 40, FONT,
-                                     'topleft',
-                                     (self.heart_img_size, 80))
+        self.p1_points_label = Label(str(0), 0, 0, TITANIUM_HWHITE, 40, FONT,
+                                     'topleft', (10, 50))
         self.p2_title_label = Label(player2_name, WIDTH - self.heart_img_size - 110, 15, PLAYER2_COLOR, 40, FONT)
         self.p2_points_label = Label(str(0), WIDTH - self.heart_img_size, 80,
-                                     TITANIUM_HWHITE, 40, FONT, 'topright', (WIDTH - self.heart_img_size, 80))
+                                     TITANIUM_HWHITE, 40, FONT, 'topright', (WIDTH - 15, 50))
 
         self.player1 = Player(self.p1_points_label, self.sprites["dash-left-right"], self.sprites["dash-up-down"], self.sprites["explosion"], self.sprites["fuel-fire"], self.sprites["heart"], self.sprites["player1"],
                               image_size, HEIGHT-image_size, self.sprites["player_bullet"],

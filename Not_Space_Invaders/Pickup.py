@@ -27,6 +27,7 @@ class Pickup:
 
         self.last_spawn_time = pygame.time.get_ticks()
         self.spawn_cooldown = spawn_cooldown
+        self.pickup_animation = Animation(self.pickup_sprite, 150)
 
     def reset_position(self):
         self.x = random.uniform(-image_size, WIDTH - image_size)
@@ -55,4 +56,5 @@ class Pickup:
 
     def show(self, window: Window):
         if self.y < HEIGHT and not self.pickup:
-            window.screen.blit(self.pickup_sprite.frames[0], (self.x, self.y))
+            self.pickup_animation.animate(window, self.x, self.y)
+            # window.screen.blit(self.pickup_sprite.frames[0], (self.x, self.y))

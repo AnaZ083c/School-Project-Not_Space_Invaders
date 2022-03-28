@@ -333,7 +333,7 @@ class Player:
         # print("HEARTS_IMG_SIZE", hearts_img_size)
         # print("HEALTH: ", self.health)
         # print("MAX HEALTH: ", self.health)
-        heart_y = 40
+        heart_y = 80
         heart_x = 0
         heart_count = 0
         for i in range(0, self.health):
@@ -354,7 +354,7 @@ class Player:
                 heart_x += 1
                 heart_count += 1
         self.last_heart_y = heart_y
-        self.points_label.change_y(heart_y + hearts_img_size)
+        # self.points_label.change_y(heart_y + hearts_img_size)
 
     def update_health(self, factor):
         self.max_health += factor

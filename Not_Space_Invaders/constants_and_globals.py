@@ -7,7 +7,7 @@ BLACK = (0, 0, 0)
 BLACK_RED = (115, 100, 100)
 BLACKER_RED = (78, 12, 12)
 (WIDTH, HEIGHT) = (1920, 1080)  # (1280, 1000)  # 1000, 900
-SPRITE_SHEET = 'assets/sprite-sheet07-transparent.png'
+SPRITE_SHEET = 'assets/sprite-sheet08-transparent.png'
 PLANET = 'assets/end.png'
 
 PLAYER_RED_BULLET_SFX = 'assets/player_redBullet_shoot.mp3'
