@@ -17,7 +17,7 @@ Also, turn in all the videos that correspond with the whole game design
 
 ## Until: April 6th, 2022
 
-# Additional stuff
+### Additional TODO:
 1. add multicolored label, so you can use it for coloring different sections of a text
 
 ### Useful urls:
