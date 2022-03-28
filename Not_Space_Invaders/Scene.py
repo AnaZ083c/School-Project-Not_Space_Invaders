@@ -409,6 +409,14 @@ win_label_xy = (WIDTH/2, HEIGHT/2 - 80)
 win_label = Label("OUR PLANET IS SAVED!", win_label_xy[0], win_label_xy[1],
                   (0, 255, 0), win_font_size, FONT, 'center', win_label_xy)
 
+shortcuts_font_size = int(40)
+shortcuts_label_xy = (0, HEIGHT - 35)
+shortcutF10_label = Label("F10...Pause", shortcuts_label_xy[0], shortcuts_label_xy[1],
+                          (255, 255, 255), shortcuts_font_size, FONT, 'bottomleft', shortcuts_label_xy)
+shortcuts_label_xy = (0, HEIGHT)
+shortcutF5_label = Label("F5...Exit to menu", shortcuts_label_xy[0], shortcuts_label_xy[1],
+                         (255, 255, 255), shortcuts_font_size, FONT, 'bottomleft', shortcuts_label_xy)
+
 
 def create_leadboard(points_path):
     labels = []
@@ -1345,6 +1353,11 @@ class Singleplayer(Scene):
         self.pause = False
         self.pause_label = pause_label
 
+        global shortcutF10_label
+        global shortcutF5_label
+        self.f10_label = shortcutF10_label
+        self.f5_label = shortcutF5_label
+
         self.game_over = False
         self.win = False
 
@@ -1516,6 +1529,8 @@ class Singleplayer(Scene):
         # Player 1 GUI
         self.p1_title_label.show(window)
         # self.p1_points_label.show(window)
+        self.f10_label.show(window)
+        self.f5_label.show(window)
 
         if self.switch_level and not self.boss_time:
             self.new_set_label.show(window)
@@ -1636,6 +1651,11 @@ class Multiplayer(Scene):
         self.pause_label = pause_label
         self.game_over = False
         self.win = False
+
+        global shortcutF10_label
+        global shortcutF5_label
+        self.f10_label = shortcutF10_label
+        self.f5_label = shortcutF5_label
 
     def process_input(self, events, pressed_keys):
         global current_boss
@@ -1822,6 +1842,8 @@ class Multiplayer(Scene):
         self.p2_title_label.show(window)
 
         # self.p1_points_label.show(window)
+        self.f10_label.show(window)
+        self.f5_label.show(window)
 
         if self.switch_level and not self.boss_time:
             self.new_set_label.show(window)
