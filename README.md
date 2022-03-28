@@ -16,3 +16,6 @@ It's the "NOT Space Invaders.zip" file
 Also, turn in all the videos that correspond with the whole game design
 
 ## Until: April 6th, 2022
+
+### Useful urls:
+https://stackoverflow.com/questions/20002242/how-to-scale-images-to-screen-size-in-pygame
