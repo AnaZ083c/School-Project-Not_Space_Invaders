@@ -1,5 +1,5 @@
 from Window import Window
-from constants_and_globals import *
+import constants_and_globals as cag
 import pygame
 
 """ 
@@ -33,8 +33,8 @@ class Sprite:
                  scale: float = 0.5):
         self.sprite_sheet = sprite_sheet
         self.frames = []
-        self.scale = scale  # IMAGE_SCALE
-        self.img_size = FRAME_OFFSET * self.scale
+        self.scale = scale * cag.scale # IMAGE_SCALE
+        self.img_size = cag.FRAME_OFFSET * self.scale
 
         self.init_frames(horizontal, xy_start, num_of_frames)
 
@@ -45,7 +45,7 @@ class Sprite:
         if not horizontal:
             for i, j in zip(range(x_start, end_range), range(0, num_of_frames)):
                 self.frames.append(
-                    self.sprite_sheet.get_image(x_start, 256, 256, self.scale, (x_start, y_start + j * FRAME_OFFSET)))
+                    self.sprite_sheet.get_image(x_start, 256, 256, self.scale, (x_start, y_start + j * cag.FRAME_OFFSET)))
         else:
             for i in range(x_start, end_range):
                 self.frames.append(self.sprite_sheet.get_image(i, 256, 256, self.scale, (x_start, y_start)))
@@ -53,14 +53,12 @@ class Sprite:
     def show_frames(self, window: Window, xy_tup=(0, 0)):
         (x, y) = xy_tup
         # print(len(self.frames))
+
         for i in range(0, len(self.frames)):
-            window.screen.blit(self.frames[i], (x + ((FRAME_OFFSET * i) * self.scale), y))
+            window.screen.blit(self.frames[i], (x + ((cag.FRAME_OFFSET * i) * self.scale), y))
 
     def set_scale(self, new_scale):
-        self.scale = new_scale
-
-    def rotate(self, angle: float):
-        rotated_sprite_sheet = pygame.transform.rotate(self.sprite_sheet, angle)
+        self.scale = new_scale * cag.scale
 
 
 

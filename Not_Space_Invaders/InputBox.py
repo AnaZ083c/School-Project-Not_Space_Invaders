@@ -7,8 +7,8 @@ class InputBox:
         self.font = font
         self.x = x
         self.y = y
-        self.w = w
-        self.h = h
+        self.w = w * scale
+        self.h = h * scale
         self.rect = pg.Rect(self.x, self.y, self.w, self.h)
         self.placeholder = placeholder
 

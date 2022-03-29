@@ -1,13 +1,14 @@
 from Window import Window
+from constants_and_globals import *
 import pygame
 
 
 class Label:
     def __init__(self, string, x, y, color, size, font_file, position: str = '', rect_pos=0):
         self.string = string
-        self.x = x
-        self.y = y
-        self.size = size
+        self.x = x * scale
+        self.y = y * scale
+        self.size = int(size * scale)
         self.color = color
         self.position = position
         self.rect_pos = rect_pos

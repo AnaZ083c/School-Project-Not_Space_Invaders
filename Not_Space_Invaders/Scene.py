@@ -754,7 +754,7 @@ class EnterNameP1(Scene):
         self.confirm = pygame.mixer.Sound(GENERIC_ENEMY_BULLET_SFX)
         self.notEmptyName = False
 
-        self.font = pygame.font.Font(FONT, 60)
+        self.font = pygame.font.Font(FONT, int(60 * FONT_SCALE))
 
         # if player_name[:-1] == ' ':
 

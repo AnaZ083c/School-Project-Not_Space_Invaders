@@ -41,6 +41,8 @@ def read_enemies(infilename: str, enemy_ids: list, boom: Sprite, bullets: list, 
 
     min_, max_ = min_max_shoot_cooldown
 
+    x_offset = int(x_offset * scale)
+    y_offset = int(y_offset * scale)
     for i in range(0, cols):
         curr_x_offset = x_offset * i
         for j in range(0, rows):

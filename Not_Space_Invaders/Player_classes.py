@@ -189,7 +189,7 @@ class Player:
         if self.killed_boss:
             self.update_health(2)
             self.killed_boss = False
-            self.__init__(self.points_label, self.dash_left_right, self.dash_up_down, self.boom_sprite, self.fuel_fire_sprite, self.player_hearts, self.player_sprites, self.x, self.y, self.bullet_sprites, self.player_num, self.joysticks, self.joystick_index, self.max_health, self.points)
+            self.__init__(self.points_label, self.dash_left_right, self.dash_up_down, self.boom_sprite, self.fuel_fire_sprite, self.dead_hearts, self.player_hearts, self.player_sprites, self.x, self.y, self.bullet_sprites, self.player_num, self.joysticks, self.joystick_index, self.max_health, self.points)
             if self.player_num == 2:
                 self.set_controls({
                     "up": pygame.K_w,

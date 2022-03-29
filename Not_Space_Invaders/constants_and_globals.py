@@ -6,7 +6,8 @@ NOT_CHOSEN = (130, 130, 130)
 BLACK = (0, 0, 0)
 BLACK_RED = (115, 100, 100)
 BLACKER_RED = (78, 12, 12)
-(WIDTH, HEIGHT) = (1920, 1080)  # (1280, 1000)  # 1000, 900
+(WIDTH_FIXED, HEIGHT_FIXED) = (1920, 1080)  # (1280, 1000)  # 1000, 900
+(WIDTH, HEIGHT) = (1600, 900)
 SPRITE_SHEET = 'assets/sprite-sheet08-transparent.png'
 PLANET = 'assets/end.png'
 
@@ -33,12 +34,16 @@ FONT = 'assets/fonts/Not_space_invaders_font-Regular.otf'
 LEVELS = 'assets/levels/'
 POINTS = 'assets/points/points.pts'
 
-
 PLAYER1_COLOR = (17, 255, 0)
 PLAYER2_COLOR = (0, 200, 255)
 
-IMAGE_SCALE: float = 0.5
-BOSS_IMAGE_SCALE: float = 1.0
+
+scale_x: float = WIDTH / WIDTH_FIXED
+scale_y: float = HEIGHT / HEIGHT_FIXED
+scale: float = max(scale_x, scale_y)
+IMAGE_SCALE: float = scale / 2 # 0.5
+BOSS_IMAGE_SCALE: float = scale * 1.0
+FONT_SCALE = scale * 1.0
 FRAME_OFFSET: int = 256
 
 BULLET_W = 50
