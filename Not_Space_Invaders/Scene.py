@@ -1306,7 +1306,7 @@ class Singleplayer(Scene):
         self.p1_points_label = Label(str(0), 0, 0, TITANIUM_HWHITE, 40, FONT,
                                      'topleft', (10, 50))
 
-        self.player1 = Player(self.p1_points_label, self.sprites["dash-left-right"], self.sprites["dash-up-down"], self.sprites["explosion"], self.sprites["fuel-fire"], self.sprites["heart"], self.sprites["player1"],
+        self.player1 = Player(self.p1_points_label, self.sprites["dash-left-right"], self.sprites["dash-up-down"], self.sprites["explosion"], self.sprites["fuel-fire"], self.sprites["dead-heart"], self.sprites["heart"], self.sprites["player1"],
                               image_size, HEIGHT-image_size, self.sprites["player_bullet"],
                               1, list(joysticks), player1_joyid)
         self.player1.set_controls(player1_controls)
@@ -1597,11 +1597,11 @@ class Multiplayer(Scene):
         self.p2_points_label = Label(str(0), WIDTH - self.heart_img_size, 80,
                                      TITANIUM_HWHITE, 40, FONT, 'topright', (WIDTH - 15, 50))
 
-        self.player1 = Player(self.p1_points_label, self.sprites["dash-left-right"], self.sprites["dash-up-down"], self.sprites["explosion"], self.sprites["fuel-fire"], self.sprites["heart"], self.sprites["player1"],
+        self.player1 = Player(self.p1_points_label, self.sprites["dash-left-right"], self.sprites["dash-up-down"], self.sprites["explosion"], self.sprites["fuel-fire"], self.sprites["dead-heart"], self.sprites["heart"], self.sprites["player1"],
                               image_size, HEIGHT-image_size, self.sprites["player_bullet"],
                               1, list(joysticks), player1_joyid)
         self.player2 = Player(self.p2_points_label, self.sprites["dash-left-right"], self.sprites["dash-up-down"],
-                              self.sprites["explosion"], self.sprites["fuel-fire"], self.sprites["heart"],
+                              self.sprites["explosion"], self.sprites["fuel-fire"], self.sprites["dead-heart"], self.sprites["heart"],
                               self.sprites["player2"],
                               image_size + image_size, HEIGHT - image_size, self.sprites["player_bullet"],
                               2, list(joysticks), player2_joyid)

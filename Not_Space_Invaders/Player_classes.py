@@ -7,9 +7,10 @@ import pygame
 
 
 class Player:
-    def __init__(self, points_label: Label, dash_left_right: Sprite, dash_up_down: Sprite, boom: Sprite, fuel_fire: Sprite, player_hearts: Sprite, player_sprites: Sprite, x, y, bullet_sprites: Sprite, player_num: int = 1, joysticks: list = None, joystick_index: int = -1, health: int = 5, points: int = 0):  # keyboard_controls = [ up, down, left, right ]
+    def __init__(self, points_label: Label, dash_left_right: Sprite, dash_up_down: Sprite, boom: Sprite, fuel_fire: Sprite, dead_hearts: Sprite, player_hearts: Sprite, player_sprites: Sprite, x, y, bullet_sprites: Sprite, player_num: int = 1, joysticks: list = None, joystick_index: int = -1, health: int = 5, points: int = 0):  # keyboard_controls = [ up, down, left, right ]
         self.player_sprites = player_sprites
         self.player_hearts = player_hearts
+        self.dead_hearts = dead_hearts
         self.dash_left_right = dash_left_right
         self.dash_up_down = dash_up_down
         self.fuel_fire_sprite = fuel_fire
@@ -321,8 +322,11 @@ class Player:
                 self.fuel_fire_animation.animate(window, self.x + 5, self.y + image_size/2.5)
             elif self.frame == 2:
                 self.fuel_fire_animation.animate(window, self.x - 9, self.y + image_size / 2.5)
-            for i in range(0, self.health):
-                window.screen.blit(self.player_hearts.frames[0], self.hearts_xys[i])
+            for i in range(0, self.max_health):
+                if i in range(0, self.health):
+                    window.screen.blit(self.player_hearts.frames[0], self.hearts_xys[i])
+                else:
+                    window.screen.blit(self.dead_hearts.frames[0], self.hearts_xys[i])
         else:
             self.boom_animation.animate(window, self.x, self.y, False, False)
 
