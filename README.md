@@ -11,7 +11,7 @@ It's the "NOT Space Invaders.zip" file
 4. ~~add labels for F5 and F10 functionalities on the bottom left of the screen~~
 5. ~~change points label to be on just at the bottom of the Player name label~~
 6. ~~add some kind of animation to the health pickup~~
-7. make automated scaling for different resolutions
+7. ~~make automated scaling for different resolutions~~
 
 Also, turn in all the videos that correspond with the whole game design
 
