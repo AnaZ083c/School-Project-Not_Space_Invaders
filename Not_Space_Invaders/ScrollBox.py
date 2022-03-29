@@ -4,8 +4,8 @@ import pygame
 
 class ScrollBox:
     def __init__(self, labels: list, x, y, width, height):
-        self.x = x * scale
-        self.y = y * scale
+        self.x = x
+        self.y = y
         self.width = width * scale
         self.height = height * scale
         self.labels = labels
@@ -13,6 +13,7 @@ class ScrollBox:
         self.color = (255, 255, 255)
         self.scroller_color = (176, 176, 176)
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
+        # self.rect.centerx = self.x * scale
         self.scroller_rect = pygame.Rect(self.x + self.width - 25, self.y + 10, 15, 100)
 
     def get_first_label(self):

@@ -20,12 +20,12 @@ import pygame
 pygame.font.init()
 
 # main menu
-title_size = int(100)
+title_size = int(100 * FONT_SCALE)
 title_xy = (WIDTH/2, HEIGHT/2 - 250)
 title_label = Label('definitely NOT Space Invaders', title_xy[0], title_xy[1],
                     (255, 230, 0), title_size, FONT, 'center', title_xy)
 
-menu_font_size = int(60)
+menu_font_size = int(60 * FONT_SCALE)
 singleplayer_xy = (WIDTH/2, HEIGHT/2 - 60)
 singleplayer_label = Label('Singleplayer', singleplayer_xy[0], singleplayer_xy[1],
                            TITANIUM_HWHITE, menu_font_size, FONT, 'center', singleplayer_xy)
@@ -73,16 +73,16 @@ sp_controller_xy = (WIDTH/2, HEIGHT/2 - 60)
 sp_controller_label = Label('Controller', sp_controller_xy[0], sp_controller_xy[1],
                             TITANIUM_HWHITE, menu_font_size, FONT, 'center', sp_controller_xy)
 
-sp_keyboard_xy = (WIDTH/2, HEIGHT/2 + multiplayer_label.text.get_height() - 50)
+sp_keyboard_xy = (WIDTH/2 , HEIGHT/2 + multiplayer_label.text.get_height() - 50)
 sp_keyboard_label = Label('Keyboard', sp_keyboard_xy[0], sp_keyboard_xy[1],
                           TITANIUM_HWHITE, menu_font_size, FONT, 'center', sp_keyboard_xy)
 
-back_xy = (WIDTH/2, HEIGHT/2 + exit_label.text.get_height()*3 - 30)
+back_xy = (WIDTH/2 , HEIGHT/2 + exit_label.text.get_height()*3 - 30)
 back_label = Label('Back', back_xy[0], back_xy[1],
                    TITANIUM_HWHITE, menu_font_size, FONT, 'center', back_xy)
 
 # # Choose name menu
-entername_xy = (WIDTH/2, HEIGHT/2 - 60)
+entername_xy = (WIDTH/2 , HEIGHT/2 - 60)
 entername_label = Label('Enter your name', entername_xy[0], entername_xy[1],
                         TITANIUM_HWHITE, menu_font_size, FONT, 'center', entername_xy)
 
@@ -197,25 +197,25 @@ def init_joysticks():
 
 
 stars = []
-fall_speed = 15
+fall_speed = 15 * scale
 for i in range(50):
     x = random.randint(1, WIDTH - 1)
     y = random.randint(1, HEIGHT - 1)
-    fall_speed = random.randint(1, 16)
+    fall_speed = random.randint(1, 16) * scale
     width = 1
-    height = width + fall_speed * 2
+    height = (width * scale) + fall_speed * 2
 
     star = Star(x, y, fall_speed, TITANIUM_HWHITE, width, height)
     stars.append(star)
 
 slow_stars = []
-fall_speed = 5
+fall_speed = 5 * scale
 for i in range(50):
     x = stars[i].x
     y = stars[i].y
     fall_speed = random.randint(1, 16)
     width = 1
-    height = width + fall_speed * 2
+    height = (width * scale) + fall_speed * 2
 
     slow_star = Star(x, y, fall_speed, TITANIUM_HWHITE, 1, 1)
     slow_stars.append(slow_star)
@@ -383,33 +383,33 @@ def delay(delay_time, timer, start_time):
 
 
 # ingame
-new_level_wave_font_size = int(80)
+new_level_wave_font_size = int(80 * FONT_SCALE)
 new_lw_xy = (WIDTH/2, HEIGHT/2 - 80)
 new_lw_label = Label("Level " + str(level) + ": wave " + str(wave) + " of 3", new_lw_xy[0], new_lw_xy[1],
                      (255, 255, 0), new_level_wave_font_size, FONT, 'center', new_lw_xy)
 
-boss_font_size = int(80)
+boss_font_size = int(80 * FONT_SCALE)
 boss_label_xy = (WIDTH/2, HEIGHT/2 - 80)
 boss_label = Label("BOSS num. " + str(level), boss_label_xy[0], boss_label_xy[1],
                    (255, 255, 0), boss_font_size, FONT, 'center', boss_label_xy)
 
-pause_font_size = int(150)
+pause_font_size = int(150 * FONT_SCALE)
 pause_label_xy = (WIDTH/2, HEIGHT/2 - 200)
 pause_label = Label("PAUSED", pause_label_xy[0], pause_label_xy[1],
                     (255, 100, 0), pause_font_size, FONT, 'center', pause_label_xy)
 
 
-death_font_size = int(100)
+death_font_size = int(100 * FONT_SCALE)
 death_label_xy = (WIDTH/2, HEIGHT/2 - 80)
 death_label = Label("OUR PLANET IS DOOMED!", death_label_xy[0], death_label_xy[1],
                     (255, 0, 0), death_font_size, FONT, 'center', death_label_xy)
 
-win_font_size = int(100)
+win_font_size = int(100 * FONT_SCALE)
 win_label_xy = (WIDTH/2, HEIGHT/2 - 80)
 win_label = Label("OUR PLANET IS SAVED!", win_label_xy[0], win_label_xy[1],
                   (0, 255, 0), win_font_size, FONT, 'center', win_label_xy)
 
-shortcuts_font_size = int(40)
+shortcuts_font_size = int(40 * FONT_SCALE)
 shortcuts_label_xy = (0, HEIGHT - 35)
 shortcutF10_label = Label("F10...Pause", shortcuts_label_xy[0], shortcuts_label_xy[1],
                           (255, 255, 255), shortcuts_font_size, FONT, 'bottomleft', shortcuts_label_xy)
@@ -420,7 +420,7 @@ shortcutF5_label = Label("F5...Exit to menu", shortcuts_label_xy[0], shortcuts_l
 
 def create_leadboard(points_path):
     labels = []
-    font_size = int(60)
+    font_size = int(60 * FONT_SCALE)
     factor = 5
     label_x = WIDTH/2
     label_y = HEIGHT/2 - factor
@@ -445,7 +445,7 @@ def create_leadboard(points_path):
 def create_controls_labels(p1_controls: dict, p2_controls: dict):
     labels = []
 
-    font_size = int(60)
+    font_size = int(60 * FONT_SCALE)
     factor = 5
     label_x = WIDTH/2
     label_y = HEIGHT/2 - factor
@@ -639,8 +639,8 @@ class PointsScene(Scene):
 
         scroll_box_width = 800
         scroll_box_height = 600
-        scroll_box_x = self.labels[0].x - 5 - scroll_box_width/2
-        scroll_box_y = self.labels[0].y - 5 - scroll_box_height/2
+        scroll_box_x = self.labels[0].x - 5 - (scroll_box_width * scale)/2
+        scroll_box_y = self.labels[0].y - 5 - (scroll_box_height * scale)/2
         self.scroll_box = ScrollBox(self.labels, scroll_box_x, scroll_box_y, scroll_box_width, scroll_box_height)
 
     def process_input(self, events, pressed_keys):
@@ -697,8 +697,8 @@ class ControlsScene(Scene):
 
         scroll_box_width = 800
         scroll_box_height = 600
-        scroll_box_x = self.labels[0].x - 5 - scroll_box_width/2
-        scroll_box_y = self.labels[0].y - 5 - scroll_box_height/2
+        scroll_box_x = self.labels[0].x - 5 - (scroll_box_width * scale) / 2
+        scroll_box_y = self.labels[0].y - 5 - (scroll_box_height * scale) / 2
         self.scroll_box = ScrollBox(self.labels, scroll_box_x, scroll_box_y, scroll_box_width, scroll_box_height)
 
     def process_input(self, events, pressed_keys):
@@ -834,7 +834,7 @@ class EnterNameP2(Scene):
         self.confirm = pygame.mixer.Sound(GENERIC_ENEMY_BULLET_SFX)
         self.notEmptyNames = False
 
-        self.font = pygame.font.Font(FONT, 60)
+        self.font = pygame.font.Font(FONT, int(60 * FONT_SCALE))
         self.input_box_p1 = InputBox(self.font, WIDTH/2 - 110, HEIGHT/2 - 150, 230, 60, player1_name)
         self.input_box_p2 = InputBox(self.font, WIDTH / 2 - 110, HEIGHT / 2 + 130, 230, 60, player2_name)
 
@@ -1302,8 +1302,8 @@ class Singleplayer(Scene):
         ]
 
         global player1_name
-        self.p1_title_label = Label(player1_name, self.heart_img_size - 40, 15, PLAYER1_COLOR, 40, FONT)
-        self.p1_points_label = Label(str(0), 0, 0, TITANIUM_HWHITE, 40, FONT,
+        self.p1_title_label = Label(player1_name, self.heart_img_size - 40, 15, PLAYER1_COLOR, int(40 * FONT_SCALE), FONT)
+        self.p1_points_label = Label(str(0), 0, 0, TITANIUM_HWHITE, int(40 * FONT_SCALE), FONT,
                                      'topleft', (10, 50))
 
         self.player1 = Player(self.p1_points_label, self.sprites["dash-left-right"], self.sprites["dash-up-down"], self.sprites["explosion"], self.sprites["fuel-fire"], self.sprites["dead-heart"], self.sprites["heart"], self.sprites["player1"],
@@ -1590,12 +1590,12 @@ class Multiplayer(Scene):
 
         global player1_name
         global player2_name
-        self.p1_title_label = Label(player1_name, self.heart_img_size - 40, 15, PLAYER1_COLOR, 40, FONT)
-        self.p1_points_label = Label(str(0), 0, 0, TITANIUM_HWHITE, 40, FONT,
+        self.p1_title_label = Label(player1_name, self.heart_img_size - 40, 15, PLAYER1_COLOR, int(40 * FONT_SCALE), FONT)
+        self.p1_points_label = Label(str(0), 0, 0, TITANIUM_HWHITE, int(40 * FONT_SCALE), FONT,
                                      'topleft', (10, 50))
-        self.p2_title_label = Label(player2_name, WIDTH - self.heart_img_size - 110, 15, PLAYER2_COLOR, 40, FONT)
+        self.p2_title_label = Label(player2_name, WIDTH - self.heart_img_size - 110, 15, PLAYER2_COLOR, int(40 * FONT_SCALE), FONT)
         self.p2_points_label = Label(str(0), WIDTH - self.heart_img_size, 80,
-                                     TITANIUM_HWHITE, 40, FONT, 'topright', (WIDTH - 15, 50))
+                                     TITANIUM_HWHITE, int(40 * FONT_SCALE), FONT, 'topright', (WIDTH - 15, 50))
 
         self.player1 = Player(self.p1_points_label, self.sprites["dash-left-right"], self.sprites["dash-up-down"], self.sprites["explosion"], self.sprites["fuel-fire"], self.sprites["dead-heart"], self.sprites["heart"], self.sprites["player1"],
                               image_size, HEIGHT-image_size, self.sprites["player_bullet"],

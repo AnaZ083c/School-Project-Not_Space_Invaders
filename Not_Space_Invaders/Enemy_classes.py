@@ -35,8 +35,8 @@ class Enemy:
         self.en_bullet_y = self.y
         self.en_bullet = pc.Bullet(bullet_sprites, self, self.en_bullet_x, self.en_bullet_y, self.dmg_give)
 
-        self.move_speed = 2
-        self.bullet_speed = 5
+        self.move_speed = 2 * scale
+        self.bullet_speed = 5 * scale
         self.is_moving = False
 
         self.last_update = pygame.time.get_ticks()

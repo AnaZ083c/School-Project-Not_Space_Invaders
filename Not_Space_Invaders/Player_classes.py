@@ -45,9 +45,9 @@ class Player:
         self.points = points
 
         self.frame = 0  # idle
-        self.move_speed = 5
+        self.move_speed = 5 * scale
         self.original_speed = self.move_speed
-        self.bullet_speed = 10
+        self.bullet_speed = 10 * scale
         self.is_moving = False
         self.keyboard_controls = {"up": pygame.K_UP,
                                   "down": pygame.K_DOWN,

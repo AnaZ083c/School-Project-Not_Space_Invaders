@@ -10,8 +10,10 @@ import constants_and_globals as cag
 
 import random
 import pygame
+import os
 import sys
 
+os.environ['SDL_VIDEO_CENTERED'] = '1' # You have to call this before pygame.init()
 
 pygame.init()
 # window init
