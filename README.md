@@ -19,6 +19,8 @@ Also, turn in all the videos that correspond with the whole game design
 
 ### Additional TODO:
 1. add multicolored label, so you can use it for coloring different sections of a text
+2. add some rotating planets
+3. meteorites
 
 ### Useful urls:
 https://stackoverflow.com/questions/20002242/how-to-scale-images-to-screen-size-in-pygame
