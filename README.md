@@ -5,7 +5,7 @@
 It's the "NOT Space Invaders.zip" file
 
 # TODO:
-1. add darker hearts for health, where there are none
+1. ~~add darker hearts for health, where there are none~~
 2. ~~Pickups -> change \[ ? ] to something else, like the picture of a bullet~~
 3. ~~rename the game to "Definitely NOT Space Invaders"~~
 4. ~~add labels for F5 and F10 functionalities on the bottom left of the screen~~
