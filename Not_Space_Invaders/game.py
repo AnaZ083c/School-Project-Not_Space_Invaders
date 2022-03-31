@@ -26,6 +26,7 @@ window.init_window()
 enemies_list = []
 
 sprite_sheet = SpriteSheet(SPRITE_SHEET)
+planets_sprite_sheet = SpriteSheet(PLANETS_SPRITE_SHEET)
 icon = pygame.image.load(ICON)
 pygame.display.set_icon(icon)
 
@@ -90,6 +91,13 @@ deth_img_size = FRAME_OFFSET * deth_sprite.scale
 win_sprite = Sprite(sprite_sheet, 1, (5, 0), True, 2.5)
 win_img_size = FRAME_OFFSET * win_sprite.scale
 
+
+# PLANETS
+planet1_sprites = Sprite(planets_sprite_sheet, 5, (0, 0), True, PLANET_SCALE * 0.8)
+planet2_sprites = Sprite(planets_sprite_sheet, 5, (0, FRAME_OFFSET), True, PLANET_SCALE * 1.5)
+planet3_sprites = Sprite(planets_sprite_sheet, 5, (0, 2 * FRAME_OFFSET), True, PLANET_SCALE)
+
+
 octoboss_animation = Animation(octopus_boss, 300)
 
 sprites = {
@@ -127,6 +135,9 @@ sprites = {
     "blue-pickup": blue_pickup,
     "purple-pickup": purple_pickup,
     "boss-bar": boss_bar,
+    "planet-1": planet1_sprites,
+    "planet-2": planet2_sprites,
+    "planet-3": planet3_sprites,
 }
 
 

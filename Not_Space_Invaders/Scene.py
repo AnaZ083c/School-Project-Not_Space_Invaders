@@ -3,6 +3,7 @@ from Player_classes import Player, Bullet
 from Enemy_classes import Enemy, Enemies, FirstBoss, SecondBoss, ThirdBoss, FourthBoss, FinalBoss
 from constants_and_globals import *
 from Stars_classes import Star
+from Planet import Planet
 from functions import *
 from InputBox import InputBox
 from ScrollBox import ScrollBox
@@ -201,11 +202,12 @@ fall_speed = 15 * scale
 for i in range(50):
     x = random.randint(1, WIDTH - 1)
     y = random.randint(1, HEIGHT - 1)
+    star_color = random.randint(0, len(star_colors)-1)
     fall_speed = random.randint(1, 16) * scale
-    width = 1
+    width = star_sizes[star_color] # 1
     height = (width * scale) + fall_speed * 2
 
-    star = Star(x, y, fall_speed, TITANIUM_HWHITE, width, height)
+    star = Star(x, y, fall_speed, star_colors[star_color], width, height)
     stars.append(star)
 
 slow_stars = []
@@ -213,6 +215,7 @@ fall_speed = 5 * scale
 for i in range(50):
     x = stars[i].x
     y = stars[i].y
+    star_color = stars[i].color
     fall_speed = random.randint(1, 16)
     width = 1
     height = (width * scale) + fall_speed * 2
@@ -234,6 +237,11 @@ def animate_slow_stars(window: Window):
         slow_star.draw(window)
         slow_star.fall()
         slow_star.check_if_i_should_reappear_on_top()
+
+def animate_planets(window: Window, planets_list: list):
+    for planet_ in planets_list:
+        planet_.show(window)
+        planet_.fall()
 
 
 
@@ -501,6 +509,14 @@ def create_controls_labels(p1_controls: dict, p2_controls: dict):
     return labels
 
 
+planets = []
+for i in range(3):
+    fall_speed = random.randint(1, 5) * scale
+    spawn_cooldown = random.randint(10, 50)
+
+    planets.append([fall_speed, spawn_cooldown])
+
+
 """""""""""""""""""""""""""
     CLASSES
 """""""""""""""""""""""""""
@@ -513,6 +529,8 @@ class Scene:
     def __init__(self, sprites: dict):
         self.next = self
         self.sprites = sprites
+        self.planets = []
+        self.init_planets()
 
     def process_input(self, events, pressed_keys):
         raise NotImplementedError
@@ -522,6 +540,13 @@ class Scene:
 
     def show(self, window: Window):  # render
         raise NotImplementedError
+
+    def init_planets(self):
+        global planets
+        p_num = 1
+        for pfall_speed, pspawn in planets:
+            self.planets.append(Planet(self.sprites[str("planet-"+str(p_num))], pfall_speed, pspawn))
+            p_num += 1
 
     def switch_to_scene(self, next_scene):
         self.next = next_scene
@@ -603,6 +628,7 @@ class TitleScene(Scene):
 
         window.screen.fill(BLACK)
         animate_stars(window)
+        animate_planets(window, self.planets)
 
         window.screen.blit(self.sprites["heart"].frames[0], (self.heart_x, self.heart_y))
         self.labels[0].show(window)     # draw Title text

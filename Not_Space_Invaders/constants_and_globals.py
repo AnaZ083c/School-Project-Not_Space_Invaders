@@ -17,6 +17,7 @@ HEIGHT = info.current_h # HEIGHT = 900
 pygame.quit()
 
 SPRITE_SHEET = 'assets/sprite-sheet08-transparent.png'
+PLANETS_SPRITE_SHEET = 'assets/planets-sprite-sheet.png'
 PLANET = 'assets/end.png'
 
 PLAYER_RED_BULLET_SFX = 'assets/player_redBullet_shoot.mp3'
@@ -50,6 +51,7 @@ scale_y: float = HEIGHT / HEIGHT_FIXED
 scale: float = max(scale_x, scale_y)
 IMAGE_SCALE: float = scale / 2 # 0.5
 BOSS_IMAGE_SCALE: float = scale * 1.0
+PLANET_SCALE: float = scale * 1.0
 FONT_SCALE = scale * 1.0
 FRAME_OFFSET: int = 256
 
@@ -84,8 +86,29 @@ BOSS_5_DMG = 6
 SETTINGS = 'assets/settings/settings.txt'
 
 # globals
+planet_image_size = (FRAME_OFFSET * PLANET_SCALE)
 image_size = (FRAME_OFFSET * IMAGE_SCALE)
 boss_image_size = (FRAME_OFFSET * BOSS_IMAGE_SCALE)
+
+star_colors = [
+    (0, 113, 193),
+    (153, 205, 255),
+    (255, 255, 255),
+    (254, 255, 153),
+    (255, 255, 0),
+    (255, 102, 0),
+    (254, 0, 0)
+]
+
+star_sizes = [
+    4,
+    3,
+    2,
+    1,
+    1,
+    1,
+    1
+]
 
 sound_state = 1
 enemy_hit_sfxs = [ENEMY_HIT_1, ENEMY_HIT_2, ENEMY_HIT_3]
