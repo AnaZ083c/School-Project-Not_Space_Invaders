@@ -3,6 +3,7 @@ from Sprite import SpriteSheet, Sprite, Animation
 from Player_classes import Player, Bullet
 from Enemy_classes import Enemy, Enemies
 from Stars_classes import Star
+from Planet import *
 from functions import *
 from Scene import *
 from Label import Label
@@ -99,6 +100,11 @@ planet3_sprites = Sprite(planets_sprite_sheet, 5, (0, 2 * FRAME_OFFSET), True, P
 
 
 octoboss_animation = Animation(octopus_boss, 300)
+planets = Planets([
+    planet1_sprites,
+    planet2_sprites,
+    planet3_sprites
+])
 
 sprites = {
     "heart": helth_sprite,
@@ -138,8 +144,8 @@ sprites = {
     "planet-1": planet1_sprites,
     "planet-2": planet2_sprites,
     "planet-3": planet3_sprites,
+    "planets": planets
 }
-
 
 def get_sound_state(setting_file: str) -> int:
     # Read the file

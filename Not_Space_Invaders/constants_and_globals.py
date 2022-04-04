@@ -14,10 +14,9 @@ WIDTH_FIXED = 1920
 HEIGHT_FIXED = 1080  # (1280, 1000)  # 1000, 900
 WIDTH = info.current_w # WIDTH = 1600
 HEIGHT = info.current_h # HEIGHT = 900
-pygame.quit()
 
 SPRITE_SHEET = 'assets/sprite-sheet08-transparent.png'
-PLANETS_SPRITE_SHEET = 'assets/planets-sprite-sheet.png'
+PLANETS_SPRITE_SHEET = 'assets/planets-sprite-sheet-2.png'
 PLANET = 'assets/end.png'
 
 PLAYER_RED_BULLET_SFX = 'assets/player_redBullet_shoot.mp3'

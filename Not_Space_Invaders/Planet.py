@@ -38,3 +38,30 @@ class Planet:
 
     def show(self, window: Window):
         self.animation.animate(window, self.x, self.y)
+
+
+class Planets:
+    def __init__(self, sprites: list):
+        self.sprites = sprites
+        self.planets = []
+
+        self.generate()
+
+    def generate(self):
+        maxsize = max([sprite.img_size for sprite in self.sprites])
+
+        for sprite in self.sprites:
+            # r = random.randint(1, 5)
+            a = 0.002
+            # b = 0.005
+            fall_speed = a * (maxsize * 1.1 - sprite.img_size) # ((a * r/5) + (b * (1 - r/5))) * (maxsize * 1.1 - sprite.img_size)
+            spawn_cooldown = random.randint(10, 50)
+
+            self.planets.append(Planet(sprite, fall_speed, spawn_cooldown))
+
+    def animate(self, window: Window):
+        for planet in self.planets:
+            planet.show(window)
+            planet.fall()
+
+

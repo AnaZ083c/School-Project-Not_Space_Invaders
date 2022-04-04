@@ -33,6 +33,7 @@ class Window:
         print(f"{cag.WIDTH} x {cag.HEIGHT}")
 
         self.screen = pygame.display.set_mode((self.width, self.height), pygame.FULLSCREEN)
+        # self.screen = pygame.display.set_mode((self.width, self.height))
         pygame.display.set_caption('Definitely Not Space Invaders')
         self.clock = pygame.time.Clock()
 

@@ -238,13 +238,6 @@ def animate_slow_stars(window: Window):
         slow_star.fall()
         slow_star.check_if_i_should_reappear_on_top()
 
-def animate_planets(window: Window, planets_list: list):
-    for planet_ in planets_list:
-        planet_.show(window)
-        planet_.fall()
-
-
-
 def get_sound_state(setting_file: str) -> int:
     # Read the file
     with open(setting_file, 'r') as file:
@@ -529,8 +522,6 @@ class Scene:
     def __init__(self, sprites: dict):
         self.next = self
         self.sprites = sprites
-        self.planets = []
-        self.init_planets()
 
     def process_input(self, events, pressed_keys):
         raise NotImplementedError
@@ -540,13 +531,6 @@ class Scene:
 
     def show(self, window: Window):  # render
         raise NotImplementedError
-
-    def init_planets(self):
-        global planets
-        p_num = 1
-        for pfall_speed, pspawn in planets:
-            self.planets.append(Planet(self.sprites[str("planet-"+str(p_num))], pfall_speed, pspawn))
-            p_num += 1
 
     def switch_to_scene(self, next_scene):
         self.next = next_scene
@@ -627,8 +611,8 @@ class TitleScene(Scene):
         # global sound_toggle_label
 
         window.screen.fill(BLACK)
+
         animate_stars(window)
-        animate_planets(window, self.planets)
 
         window.screen.blit(self.sprites["heart"].frames[0], (self.heart_x, self.heart_y))
         self.labels[0].show(window)     # draw Title text
@@ -690,6 +674,7 @@ class PointsScene(Scene):
         # global sound_toggle_label
 
         window.screen.fill(BLACK)
+
         animate_stars(window)
 
         window.screen.blit(self.sprites["heart"].frames[0], (self.heart_x, self.heart_y))
@@ -748,6 +733,7 @@ class ControlsScene(Scene):
         # global sound_toggle_label
 
         window.screen.fill(BLACK)
+
         animate_stars(window)
 
         window.screen.blit(self.sprites["heart"].frames[0], (self.heart_x, self.heart_y))
@@ -826,6 +812,7 @@ class EnterNameP1(Scene):
 
     def show(self, window: Window):
         window.screen.fill(BLACK)
+
         animate_stars(window)
 
         window.screen.blit(self.sprites["heart"].frames[0], (self.heart_x, self.heart_y))
@@ -909,6 +896,7 @@ class EnterNameP2(Scene):
 
     def show(self, window: Window):
         window.screen.fill(BLACK)
+
         animate_stars(window)
 
         window.screen.blit(self.sprites["heart"].frames[0], (self.heart_x, self.heart_y))
@@ -1044,6 +1032,7 @@ class ChooseDeviceP2(Scene):
 
     def show(self, window: Window):
         window.screen.fill(BLACK)
+
         animate_stars(window)
 
         window.screen.blit(self.sprites["heart"].frames[0], (self.heart_x, self.heart_y))
@@ -1152,6 +1141,7 @@ class ControllerInitP2(Scene):
 
     def show(self, window: Window):
         window.screen.fill(BLACK)
+
         animate_stars(window)
 
         window.screen.blit(self.sprites["heart"].frames[0], (self.heart_x, self.heart_y))
@@ -1225,6 +1215,7 @@ class ChooseDevice(Scene):
 
     def show(self, window: Window):
         window.screen.fill(BLACK)
+
         animate_stars(window)
 
         window.screen.blit(self.sprites["heart"].frames[0], (self.heart_x, self.heart_y))
@@ -1286,6 +1277,7 @@ class ControllerInit(Scene):
 
     def show(self, window: Window):
         window.screen.fill(BLACK)
+
         animate_stars(window)
 
         window.screen.blit(self.sprites["heart"].frames[0], (self.heart_x, self.heart_y))
@@ -1504,6 +1496,7 @@ class Singleplayer(Scene):
 
     def show(self, window: Window):
         window.screen.fill(BLACK)
+
         animate_stars(window)
 
         for count in range(level):
@@ -1808,6 +1801,7 @@ class Multiplayer(Scene):
 
     def show(self, window: Window):
         window.screen.fill(BLACK)
+
         animate_stars(window)
 
         for count in range(level):
@@ -2040,6 +2034,7 @@ class Multiplayer2(Scene):
 
     def show(self, window: Window):
         window.screen.fill(BLACK)
+
         animate_stars(window)
 
         self.player1.show(window)
