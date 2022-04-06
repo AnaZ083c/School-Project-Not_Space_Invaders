@@ -1,26 +1,29 @@
-# School Project Not_Space_Invaders
- A game that's a lot like Space Invaders but it's made for a school project, so it's also probably not as good
- 
-# Executable
-It's the "NOT Space Invaders.zip" file
+# Definitely NOT Space Invaders
+This is a game I made for the final school project. Enjoy!
 
-# TODO:
-1. ~~add darker hearts for health, where there are none~~
-2. ~~Pickups -> change \[ ? ] to something else, like the picture of a bullet~~
-3. ~~rename the game to "Definitely NOT Space Invaders"~~
-4. ~~add labels for F5 and F10 functionalities on the bottom left of the screen~~
-5. ~~change points label to be on just at the bottom of the Player name label~~
-6. ~~add some kind of animation to the health pickup~~
-7. ~~make automated scaling for different resolutions~~
+It's also for Windows only.
 
-Also, turn in all the videos that correspond with the whole game design
+# Short description about the game
+Angry aliens from the neighbouring galaxies are trying to invade our planet. Will you be the one to save it from its doom? If you can't do it alone, feel free to ask a friend for help, for there can also be two heroes!
 
-## Until: April 6th, 2022
+# About the gameplay itself
+You can play this game either on a controller or on a keyboard. If you have someone you'd like to play this game with, this game also supports multiplayer; two players on one keyboard, two players on one controller each.
 
-### Additional TODO:
-1. add multicolored label, so you can use it for coloring different sections of a text
-2. add some rotating planets
-3. meteorites
+# Controls
+You can also check them through the game (Controls)
 
-### Useful urls:
-https://stackoverflow.com/questions/20002242/how-to-scale-images-to-screen-size-in-pygame
+## Menu
+Use arrow keys to move through the menu.
+
+## Gameplay
+You can pause the game anytime using the F10 game, or you can exit to menu using F5
+
+### Player 1
+Basic movement: arrow keys on keyboard, left pad on controller
+Shoot: numpad enter on keyboard, A on controller
+Dash: numpad 3 on keyboard, RB on controller
+
+### Player 2
+Basic movement: w, s, a, d on keyboard, left pad on controller
+Shoot: k on keyboard, A on controller
+Dash: space on keyboard, RB on controller
