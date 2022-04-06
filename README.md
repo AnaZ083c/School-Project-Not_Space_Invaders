@@ -19,11 +19,11 @@ Use arrow keys to move through the menu.
 You can pause the game anytime using the F10 game, or you can exit to menu using F5
 
 ### Player 1
-Basic movement: arrow keys on keyboard, left pad on controller
-Shoot: numpad enter on keyboard, A on controller
-Dash: numpad 3 on keyboard, RB on controller
+Basic movement: arrow keys on keyboard, left pad on controller <br>
+Shoot: numpad enter on keyboard, A on controller <br>
+Dash: numpad 3 on keyboard, RB on controller <br>
 
 ### Player 2
-Basic movement: w, s, a, d on keyboard, left pad on controller
-Shoot: k on keyboard, A on controller
-Dash: space on keyboard, RB on controller
+Basic movement: w, s, a, d on keyboard, left pad on controller <br>
+Shoot: k on keyboard, A on controller <br>
+Dash: space on keyboard, RB on controller <br>
