@@ -23,7 +23,7 @@ pygame.font.init()
 # main menu
 title_size = int(100 * FONT_SCALE)
 title_xy = (WIDTH/2, HEIGHT/2 - 250)
-title_label = Label('definitely NOT Space Invaders', title_xy[0], title_xy[1],
+title_label = Label('Definitely NOT Space Invaders', title_xy[0], title_xy[1],
                     (255, 230, 0), title_size, FONT, 'center', title_xy)
 
 menu_font_size = int(60 * FONT_SCALE)
@@ -367,6 +367,7 @@ def reset_level_wave():
     player1_name = 'Player 1'
     player2_name = 'Player 2'
 
+    joysticks = set()
     player1_joyid = 0
     player2_joyid = 0
     controller_chosen = False

@@ -25,7 +25,7 @@ ENEMY_HIT_1 = 'assets/sfx/enemy-hit-1.wav'
 ENEMY_HIT_2 = 'assets/sfx/enemy-hit-2.wav'
 ENEMY_HIT_3 = 'assets/sfx/enemy-hit-3.wav'
 ENEMY_EXPLODE = 'assets/sfx/enemy-explode-1.wav'
-ICON = 'assets/not_space_invaders_icon.ico'
+ICON = 'assets/definitely_not_space_invaders_icon.ico'
 
 PLAYER_HIT_1 = 'assets/sfx/player-hit-1.wav'
 PLAYER_HIT_2 = 'assets/sfx/player-hit-2.wav'
