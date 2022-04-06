@@ -16,7 +16,7 @@ You can also check them through the game (Controls)
 Use arrow keys to move through the menu.
 
 ## Gameplay
-You can pause the game anytime using the F10 game, or you can exit to menu using F5
+You can pause the game anytime using the **F10** key, or you can exit to menu using **F5**
 
 ### Player 1
 **Basic movement**: arrow keys on keyboard, left pad on controller <br>
