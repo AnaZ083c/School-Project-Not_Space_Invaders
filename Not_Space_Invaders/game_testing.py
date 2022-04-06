@@ -140,16 +140,24 @@ bosses = [
 ]
 
 stars = []
-fall_speed = 15
-for i in range(50):
+fall_speed = 15 * scale
+for i in range(100):
     x = random.randint(1, WIDTH - 1)
     y = random.randint(1, HEIGHT - 1)
-    fall_speed = random.randint(1, 16)
-    width = 1
-    height = width + fall_speed * 2
+    star_color = random.randint(0, len(star_colors)-1)
+    fall_speed = random.randint(1, 16) * scale
+    width = star_sizes[star_color] # 1
+    height = (width * scale) + fall_speed * 2
 
-    star = Star(x, y, fall_speed, TITANIUM_HWHITE, width, height)
+    star = Star(x, y, fall_speed, star_colors[star_color], width, height)
     stars.append(star)
+
+def animate_stars(window: Window):
+    global star
+    for star in stars:
+        star.draw(window)
+        star.fall()
+        star.check_if_i_should_reappear_on_top()
 
 """"""""""""""""""""""""""""""""""""""""""" GAME LOOP """""""""""""""""""""""""""""""""""""""""""
 while window.running:
@@ -181,10 +189,11 @@ while window.running:
     #     boss.show(window)
 
     # show frame image
+    animate_stars(window)
 
-    planet1_animation.animate(window, planet_image_size, (HEIGHT/2) - planet_image_size/2)
-    planet2_animation.animate(window, planet_image_size * 3, (HEIGHT/2) - planet_image_size/2)
-    planet3_animation.animate(window, planet_image_size * 5, (HEIGHT/2) - planet_image_size/2)
+    # planet1_animation.animate(window, planet_image_size, (HEIGHT/2) - planet_image_size/2)
+    # planet2_animation.animate(window, planet_image_size * 3, (HEIGHT/2) - planet_image_size/2)
+    # planet3_animation.animate(window, planet_image_size * 5, (HEIGHT/2) - planet_image_size/2)
 
     # heal_animation.animate(window, 0, 0)
     # octoboss_animation.animate(window, image_size, 0)
